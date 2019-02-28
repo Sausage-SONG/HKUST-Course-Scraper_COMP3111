@@ -1,1 +1,7 @@
-# HKUST_2019Spring_COMP3111_Group30
+# HKUST Course Scraper
+The course project of HKUST 2019Spring COMP3111.
+
+Members of Group30:
+- NI Xiaoyuan
+- LI Mengxuan
+- SONG Sizhe
