@@ -5,3 +5,5 @@ Members of Group30:
 - NI Xiaoyuan
 - LI Mengxuan
 - SONG Sizhe
+
+Please invite the TA  ---- Ni Xiaoyuan
