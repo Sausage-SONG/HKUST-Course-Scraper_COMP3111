@@ -9,6 +9,9 @@ import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
+import javafx.scene.control.TextArea;
+
 import com.gargoylesoftware.htmlunit.html.DomText;
 import java.util.Vector;
 
@@ -87,7 +90,7 @@ public class Scraper {
 		client.getOptions().setJavaScriptEnabled(false);
 	}
 
-	private void addSlot(HtmlElement e, Course c, boolean secondRow) {
+	private void addSlot(HtmlElement e, Section s, boolean secondRow) {
 		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split(" ");
 		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
 		if (times[0].equals("TBA"))
@@ -96,12 +99,12 @@ public class Scraper {
 			String code = times[0].substring(j , j + 2);
 			if (Slot.DAYS_MAP.get(code) == null)
 				break;
-			Slot s = new Slot();
-			s.setDay(Slot.DAYS_MAP.get(code));
-			s.setStart(times[1]);
-			s.setEnd(times[3]);
-			s.setVenue(venue);
-			c.addSlot(s);	
+			Slot slot = new Slot();
+			slot.setDay(Slot.DAYS_MAP.get(code));
+			slot.setStart(times[1]);
+			slot.setEnd(times[3]);
+			slot.setVenue(venue);
+			s.addSlot(slot);
 		}
 
 	}
@@ -109,10 +112,8 @@ public class Scraper {
 	public List<Course> scrape(String baseurl, String term, String sub) {
 
 		try {
-			
 			HtmlPage page = client.getPage(baseurl + "/" + term + "/subject/" + sub);
 
-			
 			List<?> items = (List<?>) page.getByXPath("//div[@class='course']");
 			
 			Vector<Course> result = new Vector<Course>();
@@ -137,10 +138,13 @@ public class Scraper {
 				
 				List<?> sections = (List<?>) htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
 				for ( HtmlElement e: (List<HtmlElement>)sections) {
-					addSlot(e, c, false);
+					Section section = new Section();
+					section.setSectionTitle(e.getChildNodes().get(1).asText());
+					addSlot(e, section, false);
 					e = (HtmlElement)e.getNextSibling();
 					if (e != null && !e.getAttribute("class").contains("newsect"))
-						addSlot(e, c, true);
+						addSlot(e, section, true);
+					c.addSection(section);
 				}
 				
 				result.add(c);

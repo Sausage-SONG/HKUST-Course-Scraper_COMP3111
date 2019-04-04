@@ -85,15 +85,29 @@ public class Controller {
     void findSfqEnrollCourse() {
 
     }
+    
+    private List<Course> courses;
 
     @FXML
     void search() {
-    	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-    	for (Course c : v) {
+    	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
+    	
+    	// Handle 404
+    	if (courses == null) {
+    		textAreaConsole.setText("Oops! 404 Not Found! Please check your input.\n");
+    		return;
+    	}
+    	
+    	textAreaConsole.setText("");
+    	for (Course c : courses) {
     		String newline = c.getTitle() + "\n";
-    		for (int i = 0; i < c.getNumSlots(); i++) {
-    			Slot t = c.getSlot(i);
-    			newline += "Slot " + i + ":" + t + "\n";
+    		int counter = 1;
+    		for (int i = 0; i < c.getNumSections(); i++) {
+    			Section s = c.getSection(i);
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot t = s.getSlot(j);
+    				newline += "Slot" + i + ": " + s.getSectionTitle() + " " + t + "\n";
+    			}
     		}
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}

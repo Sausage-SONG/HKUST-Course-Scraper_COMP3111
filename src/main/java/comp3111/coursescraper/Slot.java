@@ -28,7 +28,7 @@ public class Slot {
 		return s;
 	}
 	public String toString() {
-		return DAYS[day] + start.toString() + "-" + end.toString() + ":" + venue;
+		return DAYS[day] + " " + start.toString() + "-" + end.toString() + ": " + venue;
 	}
 	public int getStartHour() {
 		return start.getHour();
