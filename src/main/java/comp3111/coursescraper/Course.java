@@ -17,6 +17,7 @@ public class Course {
 		numSections = 0;
 	}
 	
+	// add a section to the array
 	public void addSection(Section s) {
 		if (numSections >= DEFAULT_MAX_SECTION)
 			return;

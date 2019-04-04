@@ -36,7 +36,7 @@ public class Section {
 	
 	// get a slot by index
 	public Slot getSlot(int i) { return (i >= 0 && i < numSlots) ? slots[i] : null; }
-	// create a new slot and add it to the array
+	// add a slot to the array
 	public void addSlot(Slot s) {
 		if (numSlots >= DEFAULT_MAX_SLOT) 
 			return;
