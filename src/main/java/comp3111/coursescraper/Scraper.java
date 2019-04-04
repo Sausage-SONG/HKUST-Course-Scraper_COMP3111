@@ -113,18 +113,21 @@ public class Scraper {
 
 		try {
 			HtmlPage page = client.getPage(baseurl + "/" + term + "/subject/" + sub);
-
-			List<?> items = (List<?>) page.getByXPath("//div[@class='course']");
 			
+			// list of course divs
+			List<?> items = (List<?>) page.getByXPath("//div[@class='course']");
+			// vector of courses
 			Vector<Course> result = new Vector<Course>();
 
 			for (int i = 0; i < items.size(); i++) {
 				Course c = new Course();
 				HtmlElement htmlItem = (HtmlElement) items.get(i);
 				
+				// set course title
 				HtmlElement title = (HtmlElement) htmlItem.getFirstByXPath(".//h2");
 				c.setTitle(title.asText());
 				
+				// set course exclusions
 				List<?> popupdetailslist = (List<?>) htmlItem.getByXPath(".//div[@class='popupdetail']/table/tbody/tr");
 				HtmlElement exclusion = null;
 				for ( HtmlElement e : (List<HtmlElement>)popupdetailslist) {
@@ -136,6 +139,7 @@ public class Scraper {
 				}
 				c.setExclusion((exclusion == null ? "null" : exclusion.asText()));
 				
+				// get sections and slots
 				List<?> sections = (List<?>) htmlItem.getByXPath(".//tr[contains(@class,'newsect')]");
 				for ( HtmlElement e: (List<HtmlElement>)sections) {
 					Section section = new Section();
@@ -147,6 +151,7 @@ public class Scraper {
 					c.addSection(section);
 				}
 				
+				// a course is now complete, add to result list
 				result.add(c);
 			}
 			client.close();
