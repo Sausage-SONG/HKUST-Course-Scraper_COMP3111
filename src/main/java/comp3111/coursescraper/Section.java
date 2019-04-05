@@ -1,7 +1,7 @@
 package comp3111.coursescraper;
 
 public class Section {
-	private static final int DEFAULT_MAX_SLOT = 10;
+	private static final int DEFAULT_MAX_SLOT = 2;
 	
 	private String sectionTitle;     // e.g. L1 (1038)
 	private Slot [] slots;           // array of slots 
@@ -62,7 +62,7 @@ public class Section {
 	// whether a section has slots on some day, day from 0 to 6
 	public boolean hasDay(int day) {
 		for (int i = 0; i < numSlots; ++i) {
-			if (slots[i].getDay() == day)
+			if (slots[i].isOn(day))
 				return true;
 		}
 		return false;
