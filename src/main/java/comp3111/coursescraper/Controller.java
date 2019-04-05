@@ -19,6 +19,7 @@ import javafx.scene.paint.Color;
 
 import java.util.Random;
 import java.util.List;
+import java.util.Vector;
 public class Controller {
 
     @FXML
@@ -87,6 +88,7 @@ public class Controller {
     }
     
     private List<Course> courses;
+    private List<Course> enrolledCourses;
 
     @FXML
     void search() {
@@ -98,14 +100,36 @@ public class Controller {
     		return;
     	}
     	
+    	// count and display # of courses and sections
     	int number_of_sections = 0,
     		number_of_courses  = 0;
     	for (Course c : courses) {
     		number_of_sections += c.getNumSections();
     		number_of_courses  += (c.hasValidSection()) ? 1 : 0;
     	}
-    	textAreaConsole.setText("Total number of courses in this search: " + number_of_courses +
-    			                "\nTotal number of sections in this search: " + number_of_sections + "\n");
+    	textAreaConsole.setText("Total Number of difference sections in this search: " + number_of_courses +
+    			                "\nTotal Number of Course in this search: " + number_of_sections + "\n");
+    	
+    	// find and display a list of instrutors who have teaching assignment but not at Tu 3:10PM
+    	List<String> instructors = new Vector<String>();
+    	for (Course c : courses) {
+    		for (int i = 0; i < c.getNumSections(); ++i) {
+    			Section s = c.getSection(i);
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot slot = s.getSlot(j);
+    				if ((!slot.isOn(1) || !slot.include(15, 10)) && !instructors.contains(slot.getInstName()))
+    					instructors.add(slot.getInstName());
+    			}
+    		}
+    	}
+    	instructors.sort(null);
+    	String names = "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: ";
+    	for (String name : instructors) {
+    		names += (name + ", ");
+    	}
+    	names += "\n";
+    	textAreaConsole.setText(textAreaConsole.getText() + names);
+    	
     	for (Course c : courses) {
     		String newline = c.getTitle() + "\n";
     		int counter = 1;
@@ -113,7 +137,7 @@ public class Controller {
     			Section s = c.getSection(i);
     			for (int j = 0; j < s.getNumSlots(); ++j) {
     				Slot t = s.getSlot(j);
-    				newline += "Slot" + i + ": " + s.getSectionTitle() + " " + t + "\n";
+    				newline += "Slot" + i + ": " + s.getSectionTitle() + "\t" + t + "\n";
     			}
     		}
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
@@ -133,10 +157,6 @@ public class Controller {
     	randomLabel.setMinHeight(60);
     	randomLabel.setMaxHeight(60);
     
-    	ap.getChildren().addAll(randomLabel);
-    	
-    	
-    	
+    	ap.getChildren().addAll(randomLabel); 	
     }
-
 }

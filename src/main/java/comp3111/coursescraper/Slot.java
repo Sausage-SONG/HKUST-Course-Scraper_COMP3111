@@ -55,6 +55,18 @@ public class Slot {
 		return (endHour >= 12) ? true : false;
 	}
 	
+	// whether a slot's duration includes a time point
+	public boolean include(int hour, int minute) {
+		int startHour = start.getHour(),
+			startMinute = start.getMinute(),
+			endHour = end.getHour(),
+			endMinute = end.getMinute();
+		return (hour >= startHour && minute >= startMinute && hour <= endHour && minute <= endMinute) ? true : false;
+	}
+	
+	// whether a slot is on a day
+	public boolean isOn(int day) { return (this.day == day) ? true : false; }
+	
 	// access and modify instructor's name
 	public String getInstName() { return instName; }
 	public void setInstName(String name) { instName = name; }
