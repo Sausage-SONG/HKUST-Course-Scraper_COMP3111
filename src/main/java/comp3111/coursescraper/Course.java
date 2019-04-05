@@ -3,11 +3,12 @@ package comp3111.coursescraper;
 
 
 public class Course {
-	private static final int DEFAULT_MAX_SECTION = 10;
+	private static final int DEFAULT_MAX_SECTION = 20;
 	
 	private String title ; 
 	private String description ;
 	private String exclusion;
+	private String commonCore;
 	private Section [] sections;
 	private int numSections;
 	
@@ -15,6 +16,7 @@ public class Course {
 		sections = new Section[DEFAULT_MAX_SECTION];
 		for (int i = 0; i < DEFAULT_MAX_SECTION; i++) sections[i] = null;
 		numSections = 0;
+		commonCore = "";
 	}
 	
 	// add a section to the array
@@ -38,6 +40,33 @@ public class Course {
 			result += sections[i].getNumSlots();
 		}
 		return result;
+	}
+	
+	// whether a course has valid section(s)
+	public boolean hasValidSection() {
+		return (numSections > 0) ? true : false;
+	}
+	
+	// set common core info
+	public void setCommonCore(String c) { commonCore = c; }
+	
+	// whether a course has exclusion(s)
+	public boolean hasExclusion() { 
+		return (exclusion == "null" ? false : true);
+	}
+	
+	// whether a course has a lab or a tutorial section
+	public boolean hasLabOrTuto() {
+		for (int i = 0; i < numSections; ++i) {
+			if (sections[i].isLabOrTuto())
+				return true;
+		}
+		return false;
+	}
+	
+	// whether a course is 4Y CC
+	public boolean is4YCC() {
+		return commonCore.contains("4Y") ? true : false;
 	}
 
 	/**

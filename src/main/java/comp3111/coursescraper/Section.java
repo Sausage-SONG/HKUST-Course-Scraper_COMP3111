@@ -42,4 +42,39 @@ public class Section {
 			return;
 		slots[numSlots++] = s.clone();
 	}
+	
+	// whether a section has slots in AM and in PM
+	public boolean hasAM() {
+		for (int i = 0; i < numSlots; ++i) {
+			if (slots[i].isAM())
+				return true;
+		}
+		return false;
+	}
+	public boolean hasPM() {
+		for (int i = 0; i < numSlots; ++i) {
+			if (slots[i].isPM())
+				return true;
+		}
+		return false;
+	}
+	
+	// whether a section has slots on some day, day from 0 to 6
+	public boolean hasDay(int day) {
+		for (int i = 0; i < numSlots; ++i) {
+			if (slots[i].getDay() == day)
+				return true;
+		}
+		return false;
+	}
+	
+	// whether a section is a lab or a tutorial
+	public boolean isLabOrTuto() {
+		if (sectionTitle.charAt(0) == 'T') {
+			return true;
+		} else if (sectionTitle.charAt(0) == 'L' && sectionTitle.charAt(1) == 'A') {
+			return true;
+		}
+		return false;
+	}
 }

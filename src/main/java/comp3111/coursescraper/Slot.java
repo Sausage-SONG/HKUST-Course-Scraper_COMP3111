@@ -11,6 +11,7 @@ public class Slot {
 	private LocalTime start;
 	private LocalTime end;
 	private String venue;
+	private String instName;         // instructor's name
 	public static final String DAYS[] = {"Mo", "Tu", "We", "Th", "Fr", "Sa"};
 	public static final Map<String, Integer> DAYS_MAP = new HashMap<String, Integer>();
 	static {
@@ -25,6 +26,7 @@ public class Slot {
 		s.start = this.start;
 		s.end = this.end;
 		s.venue = this.venue;
+		s.instName = this.instName;
 		return s;
 	}
 	public String toString() {
@@ -42,6 +44,20 @@ public class Slot {
 	public int getEndMinute() {
 		return end.getMinute();
 	}
+	
+	// whether a slot is AM and is PM
+	public boolean isAM() {
+		int startHour = start.getHour();
+		return (startHour < 12) ? true : false;
+	}
+	public boolean isPM() {
+		int endHour = end.getHour();
+		return (endHour >= 12) ? true : false;
+	}
+	
+	// access and modify instructor's name
+	public String getInstName() { return instName; }
+	public void setInstName(String name) { instName = name; }
 	/**
 	 * @return the start
 	 */
