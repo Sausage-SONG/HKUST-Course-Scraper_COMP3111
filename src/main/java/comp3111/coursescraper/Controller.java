@@ -98,7 +98,14 @@ public class Controller {
     		return;
     	}
     	
-    	textAreaConsole.setText("");
+    	int number_of_sections = 0,
+    		number_of_courses  = 0;
+    	for (Course c : courses) {
+    		number_of_sections += c.getNumSections();
+    		number_of_courses  += (c.hasValidSection()) ? 1 : 0;
+    	}
+    	textAreaConsole.setText("Total number of courses in this search: " + number_of_courses +
+    			                "\nTotal number of sections in this search: " + number_of_sections + "\n");
     	for (Course c : courses) {
     		String newline = c.getTitle() + "\n";
     		int counter = 1;
