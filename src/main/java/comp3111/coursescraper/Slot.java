@@ -11,7 +11,8 @@ public class Slot {
 	private LocalTime start;
 	private LocalTime end;
 	private String venue;
-	private String instName;         // instructor's name
+	private String instName;
+	private Section parent;
 	public static final String DAYS[] = {"Mo", "Tu", "We", "Th", "Fr", "Sa"};
 	public static final Map<String, Integer> DAYS_MAP = new HashMap<String, Integer>();
 	static {
@@ -32,44 +33,37 @@ public class Slot {
 	public String toString() {
 		return DAYS[day] + " " + start.toString() + "-" + end.toString() + ": " + venue;
 	}
-	public int getStartHour() {
-		return start.getHour();
-	}
-	public int getStartMinute() {
-		return start.getMinute();
-	}
-	public int getEndHour() {
-		return end.getHour();
-	}
-	public int getEndMinute() {
-		return end.getMinute();
-	}
+		
 	
-	// whether a slot is AM and is PM
-	public boolean isAM() {
-		int startHour = start.getHour();
-		return (startHour < 12) ? true : false;
-	}
-	public boolean isPM() {
-		int endHour = end.getHour();
-		return (endHour >= 12) ? true : false;
-	}
-	
-	// whether a slot's duration includes a time point
-	public boolean include(int hour, int minute) {
-		int startHour = start.getHour(),
-			startMinute = start.getMinute(),
-			endHour = end.getHour(),
-			endMinute = end.getMinute();
-		return (hour >= startHour && minute >= startMinute && hour <= endHour && minute <= endMinute) ? true : false;
-	}
-	
-	// whether a slot is on a day
-	public boolean isOn(int day) { return (this.day == day) ? true : false; }
-	
-	// access and modify instructor's name
+	/*
+	 *  Instructor's Name
+	 */
+	/**
+	 * @return the instructor's name
+	 */
 	public String getInstName() { return instName; }
+	/**
+	 * @param name the instructor's name to set
+	 */
 	public void setInstName(String name) { instName = name; }
+	
+	
+	/*
+	 *  Parent
+	 */
+	/**
+	 * @return the parent section
+	 */
+	public Section getParent() { return parent; }
+	/**
+	 * @param s the parent section to set
+	 */
+	public void setParent(Section s) { parent = s; }
+	
+	
+	/*
+	 *  Start Time, End Time, Time Point and AM/PM Boolean Test
+	 */
 	/**
 	 * @return the start
 	 */
@@ -95,6 +89,37 @@ public class Slot {
 		this.end = LocalTime.parse(end, DateTimeFormatter.ofPattern("hh:mma", Locale.US));
 	}
 	/**
+	 * @param hour the hour, from 0 to 23
+	 * @param minute the minute, from 0 to 59
+	 * @return whether a slot duration includes a specific time point
+	 */
+	public boolean include(int hour, int minute) {
+		int startHour = start.getHour(),
+			startMinute = start.getMinute(),
+			endHour = end.getHour(),
+			endMinute = end.getMinute();
+		return (hour >= startHour && minute >= startMinute && hour <= endHour && minute <= endMinute) ? true : false;
+	}
+	/**
+	 * @return whether a slot is in AM
+	 */
+	public boolean isAM() {
+		int startHour = start.getHour();
+		return (startHour < 12) ? true : false;
+	}
+	/**
+	 * @return whether a slot is in PM
+	 */
+	public boolean isPM() {
+		int endHour = end.getHour();
+		return (endHour >= 12) ? true : false;
+	}
+	
+	
+	/*
+	 *  Venue
+	 */
+	/**
 	 * @return the venue
 	 */
 	public String getVenue() {
@@ -106,7 +131,11 @@ public class Slot {
 	public void setVenue(String venue) {
 		this.venue = venue;
 	}
-
+	
+	
+	/*
+	 *  Day
+	 */
 	/**
 	 * @return the day
 	 */
@@ -119,5 +148,10 @@ public class Slot {
 	public void setDay(int day) {
 		this.day = day;
 	}
+	/**
+	 * @param day the weekday, from 0 to 6
+	 * @return whether a slot is on a specific weekday
+	 */
+	public boolean isOn(int day) { return (this.day == day) ? true : false; }
 
 }
