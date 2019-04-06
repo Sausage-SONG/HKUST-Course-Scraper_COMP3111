@@ -18,8 +18,11 @@ import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 
 import java.util.Random;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+import java.util.Map;
+import java.util.HashMap;
 public class Controller {
 
     @FXML
@@ -87,8 +90,8 @@ public class Controller {
 
     }
     
-    private List<Course> courses;
-    private List<Course> enrolledCourses;
+    private static List<Course> courses = new Vector<Course>();
+    private static List<Section> enrolledSections = new Vector<Section>();
 
     @FXML
     void search() {
@@ -158,5 +161,21 @@ public class Controller {
     	randomLabel.setMaxHeight(60);
     
     	ap.getChildren().addAll(randomLabel); 	
+    }
+    
+    // update timetable accordingly after enrolled course list is updated
+    public void updateTimeTable() {
+    	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
+    	ap.getChildren().remove(0, enrolledSections.size());
+    	Label[] labels = new Label[enrolledSections.size()];
+    	for (int i = 0; i < enrolledSections.size(); ++i) {
+    		Section s = enrolledSections.get(i);
+    		String labelName = s.getParent().getSimplifiedTitle() + "\n" + s.getSimplifiedTitle();
+    		for (int j = 0; j < s.getNumSlots(); ++j) {
+    			Slot slot = s.getSlot(j);
+    			Label label = new Label(labelName);
+    			
+    		}
+    	}
     }
 }

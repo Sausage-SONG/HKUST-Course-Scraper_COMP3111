@@ -19,21 +19,43 @@ public class Course {
 		commonCore = "";
 	}
 	
-	// add a section to the array
+	
+	/*
+	 *  Sections
+	 */
+	/**
+	 * @return the number of sections
+	 */
+	public int getNumSections() {
+		return numSections;
+	}
+	/**
+	 * @param numSlots the number of sections to set
+	 */
+	public void setNumSections(int numSections) {
+		this.numSections = numSections;
+	}
+	/**
+	 * @param s the section to add
+	 */
 	public void addSection(Section s) {
 		if (numSections >= DEFAULT_MAX_SECTION)
 			return;
-		sections[numSections++] = s.clone();
-	}
-	
-	// get a section by index
+		sections[numSections++] = s;
+		s.setParent(this);
+	}	
+	/**
+	 * @param i the index of the section
+	 * @return the section specified by the index
+	 */
 	public Section getSection(int i) {
 		if (i >= 0 && i < numSections)
 			return sections[i];
 		return null;
 	}
-	
-	// get total # of slots
+	/**
+	 * @return the total number of slots of a course
+	 */
 	public int getNumSlots() {
 		int result = 0;
 		for (int i = 0; i < numSections; ++i) {
@@ -41,21 +63,60 @@ public class Course {
 		}
 		return result;
 	}
-	
-	// whether a course has valid section(s)
+	/**
+	 * @return whether a course has valid sections
+	 */
 	public boolean hasValidSection() {
 		return (numSections > 0) ? true : false;
 	}
 	
-	// set common core info
-	public void setCommonCore(String c) { commonCore = c; }
 	
-	// whether a course has exclusion(s)
+	/*
+	 *  Common Core
+	 */
+	/**
+	 * @param c the common core information to set
+	 */
+	public void setCommonCore(String c) { commonCore = c; }
+	/**
+	 * @return the common core information
+	 */
+	public String getCommonCore() { return commonCore; }
+	/**
+	 * @return whether a course is 4Y Common Core
+	 */
+	public boolean is4YCC() { return commonCore.contains("4Y") ? true : false; }
+	
+	
+	/*
+	 *  Exclusion
+	 */
+	/**
+	 * @return the exclusion
+	 */
+	public String getExclusion() {
+		return exclusion;
+	}
+	/**
+	 * @param exclusion the exclusion to set
+	 */
+	public void setExclusion(String exclusion) {
+		this.exclusion = exclusion;
+	}
+	/**
+	 * @return whether a course has exclusion(s)
+	 */
 	public boolean hasExclusion() { 
 		return (exclusion == "null" ? false : true);
 	}
 	
-	// whether a course has a lab or a tutorial section
+	
+	/*
+	 *  Section Type Boolean Test
+	 */
+	/**
+	 * @return whether a course has lab or tutorial section(s)
+	 */
 	public boolean hasLabOrTuto() {
 		for (int i = 0; i < numSections; ++i) {
 			if (sections[i].isLabOrTuto())
@@ -63,19 +124,24 @@ public class Course {
 		}
 		return false;
 	}
-	
-	// whether a course is 4Y CC
-	public boolean is4YCC() {
-		return commonCore.contains("4Y") ? true : false;
-	}
 
+	
+	/*
+	 *  Title
+	 */
 	/**
 	 * @return the title
 	 */
 	public String getTitle() {
 		return title;
 	}
-
+	/**
+	 * @return the simplified cousre title (i.e. Subject + Code) (e.g. "COMP1021")
+	 */
+	public String getSimplifiedTitle() {
+		String [] arr = title.split(" ");
+		return arr[0] + arr[1];
+	}
 	/**
 	 * @param title the title to set
 	 */
@@ -83,45 +149,20 @@ public class Course {
 		this.title = title;
 	}
 
+	
+	/*
+	 *  Description
+	 */
 	/**
 	 * @return the description
 	 */
 	public String getDescription() {
 		return description;
 	}
-
 	/**
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * @return the exclusion
-	 */
-	public String getExclusion() {
-		return exclusion;
-	}
-
-	/**
-	 * @param exclusion the exclusion to set
-	 */
-	public void setExclusion(String exclusion) {
-		this.exclusion = exclusion;
-	}
-
-	/**
-	 * @return the numSlots
-	 */
-	public int getNumSections() {
-		return numSections;
-	}
-
-	/**
-	 * @param numSlots the numSlots to set
-	 */
-	public void setNumSections(int numSections) {
-		this.numSections = numSections;
 	}
 }
