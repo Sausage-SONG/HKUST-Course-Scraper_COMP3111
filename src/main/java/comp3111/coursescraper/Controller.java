@@ -222,7 +222,20 @@ public class Controller {
     
     //Task2
     @FXML
-    void SelectDeselectAll(ActionEvent event) {
-
+    public void SelectDeselectAll() {
+    	CheckBox[] ListAll = {CheckboxAM, CheckboxPM,CheckboxMon,CheckboxTue,CheckboxWed,CheckboxThu,CheckboxFri,
+    			CheckboxSat,CheckboxCC,CheckboxNoEx,CheckboxWithLabs};
+    	if(BtnSelectAll.getText().contentEquals("Select All"))
+    		{BtnSelectAll.setText("De-select All");
+    		 for (int i=0; i<ListAll.length;i++) {
+    			ListAll[i].selectedProperty().set(true);
+    		 }
+    		}
+    	else if(BtnSelectAll.getText().contentEquals("De-select All"))
+    		{BtnSelectAll.setText("Select All");
+    		 for (int i=0; i<ListAll.length;i++) {
+			 ListAll[i].selectedProperty().set(false);
+		     }
+    		}
     }
 }
