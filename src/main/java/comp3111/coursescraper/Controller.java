@@ -4,6 +4,7 @@ package comp3111.coursescraper;
 import java.awt.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -48,6 +49,45 @@ public class Controller {
 
     @FXML
     private Tab tabFilter;
+    
+//A series of Checkbox obj [Task2]
+    @FXML
+    private CheckBox CheckboxAM;
+
+    @FXML
+    private CheckBox CheckboxPM;
+
+    @FXML
+    private CheckBox CheckboxMon;
+
+    @FXML
+    private CheckBox CheckboxTue;
+
+    @FXML
+    private CheckBox CheckboxWed;
+
+    @FXML
+    private CheckBox CheckboxThu;
+
+    @FXML
+    private CheckBox CheckboxFri;
+
+    @FXML
+    private CheckBox CheckboxSat;
+
+    @FXML
+    private CheckBox CheckboxCC;
+
+    @FXML
+    private CheckBox CheckboxNoEx;
+
+    @FXML
+    private CheckBox CheckboxWithLabs;
+    
+    @FXML
+    private Button BtnSelectAll;
+    
+ //[Modified by nxy]
 
     @FXML
     private Tab tabList;
@@ -177,5 +217,12 @@ public class Controller {
     			
     		}
     	}
+    }
+    
+    
+    //Task2
+    @FXML
+    void SelectDeselectAll(ActionEvent event) {
+
     }
 }
