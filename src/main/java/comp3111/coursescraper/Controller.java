@@ -18,7 +18,11 @@ import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
 
 import java.util.Random;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
+import java.util.Map;
+import java.util.HashMap;
 public class Controller {
 
     @FXML
@@ -85,15 +89,59 @@ public class Controller {
     void findSfqEnrollCourse() {
 
     }
+    
+    private static List<Course> courses = new Vector<Course>();
+    private static List<Section> enrolledSections = new Vector<Section>();
 
     @FXML
     void search() {
-    	List<Course> v = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
-    	for (Course c : v) {
+    	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
+    	
+    	// Handle 404
+    	if (courses == null) {
+    		textAreaConsole.setText("Oops! 404 Not Found! Please check your input.\n");
+    		return;
+    	}
+    	
+    	// count and display # of courses and sections
+    	int number_of_sections = 0,
+    		number_of_courses  = 0;
+    	for (Course c : courses) {
+    		number_of_sections += c.getNumSections();
+    		number_of_courses  += (c.hasValidSection()) ? 1 : 0;
+    	}
+    	textAreaConsole.setText("Total Number of difference sections in this search: " + number_of_courses +
+    			                "\nTotal Number of Course in this search: " + number_of_sections + "\n");
+    	
+    	// find and display a list of instrutors who have teaching assignment but not at Tu 3:10PM
+    	List<String> instructors = new Vector<String>();
+    	for (Course c : courses) {
+    		for (int i = 0; i < c.getNumSections(); ++i) {
+    			Section s = c.getSection(i);
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot slot = s.getSlot(j);
+    				if ((!slot.isOn(1) || !slot.include(15, 10)) && !instructors.contains(slot.getInstName()))
+    					instructors.add(slot.getInstName());
+    			}
+    		}
+    	}
+    	instructors.sort(null);
+    	String names = "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: ";
+    	for (String name : instructors) {
+    		names += (name + ", ");
+    	}
+    	names += "\n";
+    	textAreaConsole.setText(textAreaConsole.getText() + names);
+    	
+    	for (Course c : courses) {
     		String newline = c.getTitle() + "\n";
-    		for (int i = 0; i < c.getNumSlots(); i++) {
-    			Slot t = c.getSlot(i);
-    			newline += "Slot " + i + ":" + t + "\n";
+    		int counter = 1;
+    		for (int i = 0; i < c.getNumSections(); i++) {
+    			Section s = c.getSection(i);
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot t = s.getSlot(j);
+    				newline += "Slot" + i + ": " + s.getSectionTitle() + "\t" + t + "\n";
+    			}
     		}
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}
@@ -112,10 +160,22 @@ public class Controller {
     	randomLabel.setMinHeight(60);
     	randomLabel.setMaxHeight(60);
     
-    	ap.getChildren().addAll(randomLabel);
-    	
-    	
-    	
+    	ap.getChildren().addAll(randomLabel); 	
     }
-
+    
+    // update timetable accordingly after enrolled course list is updated
+    public void updateTimeTable() {
+    	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
+    	ap.getChildren().remove(0, enrolledSections.size());
+    	Label[] labels = new Label[enrolledSections.size()];
+    	for (int i = 0; i < enrolledSections.size(); ++i) {
+    		Section s = enrolledSections.get(i);
+    		String labelName = s.getParent().getSimplifiedTitle() + "\n" + s.getSimplifiedTitle();
+    		for (int j = 0; j < s.getNumSlots(); ++j) {
+    			Slot slot = s.getSlot(j);
+    			Label label = new Label(labelName);
+    			
+    		}
+    	}
+    }
 }

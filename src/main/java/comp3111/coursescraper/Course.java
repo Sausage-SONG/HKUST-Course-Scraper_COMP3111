@@ -3,38 +3,145 @@ package comp3111.coursescraper;
 
 
 public class Course {
-	private static final int DEFAULT_MAX_SLOT = 20;
+	private static final int DEFAULT_MAX_SECTION = 80;
 	
 	private String title ; 
 	private String description ;
 	private String exclusion;
-	private Slot [] slots;
-	private int numSlots;
+	private String commonCore;
+	private Section [] sections;
+	private int numSections;
 	
 	public Course() {
-		slots = new Slot[DEFAULT_MAX_SLOT];
-		for (int i = 0; i < DEFAULT_MAX_SLOT; i++) slots[i] = null;
-		numSlots = 0;
+		sections = new Section[DEFAULT_MAX_SECTION];
+		for (int i = 0; i < DEFAULT_MAX_SECTION; i++) sections[i] = null;
+		numSections = 0;
+		commonCore = "";
 	}
 	
-	public void addSlot(Slot s) {
-		if (numSlots >= DEFAULT_MAX_SLOT)
-			return;
-		slots[numSlots++] = s.clone();
+	
+	/*
+	 *  Sections
+	 */
+	/**
+	 * @return the number of sections
+	 */
+	public int getNumSections() {
+		return numSections;
 	}
-	public Slot getSlot(int i) {
-		if (i >= 0 && i < numSlots)
-			return slots[i];
+	/**
+	 * @param numSlots the number of sections to set
+	 */
+	public void setNumSections(int numSections) {
+		this.numSections = numSections;
+	}
+	/**
+	 * @param s the section to add
+	 */
+	public void addSection(Section s) {
+		if (numSections >= DEFAULT_MAX_SECTION)
+			return;
+		sections[numSections++] = s;
+		s.setParent(this);
+	}	
+	/**
+	 * @param i the index of the section
+	 * @return the section specified by the index
+	 */
+	public Section getSection(int i) {
+		if (i >= 0 && i < numSections)
+			return sections[i];
 		return null;
 	}
+	/**
+	 * @return the total number of slots of a course
+	 */
+	public int getNumSlots() {
+		int result = 0;
+		for (int i = 0; i < numSections; ++i) {
+			result += sections[i].getNumSlots();
+		}
+		return result;
+	}
+	/**
+	 * @return whether a course has valid sections
+	 */
+	public boolean hasValidSection() {
+		return (numSections > 0) ? true : false;
+	}
+	
+	
+	/*
+	 *  Common Core
+	 */
+	/**
+	 * @param c the common core information to set
+	 */
+	public void setCommonCore(String c) { commonCore = c; }
+	/**
+	 * @return the common core information
+	 */
+	public String getCommonCore() { return commonCore; }
+	/**
+	 * @return whether a course is 4Y Common Core
+	 */
+	public boolean is4YCC() { return commonCore.contains("4Y") ? true : false; }
+	
+	
+	/*
+	 *  Exclusion
+	 */
+	/**
+	 * @return the exclusion
+	 */
+	public String getExclusion() {
+		return exclusion;
+	}
+	/**
+	 * @param exclusion the exclusion to set
+	 */
+	public void setExclusion(String exclusion) {
+		this.exclusion = exclusion;
+	}
+	/**
+	 * @return whether a course has exclusion(s)
+	 */
+	public boolean hasExclusion() { 
+		return (exclusion == "null" ? false : true);
+	}
+	
+	
+	/*
+	 *  Section Type Boolean Test
+	 */
+	/**
+	 * @return whether a course has lab or tutorial section(s)
+	 */
+	public boolean hasLabOrTuto() {
+		for (int i = 0; i < numSections; ++i) {
+			if (sections[i].isLabOrTuto())
+				return true;
+		}
+		return false;
+	}
 
+	
+	/*
+	 *  Title
+	 */
 	/**
 	 * @return the title
 	 */
 	public String getTitle() {
 		return title;
 	}
-
+	/**
+	 * @return the simplified cousre title (i.e. Subject + Code) (e.g. "COMP1021")
+	 */
+	public String getSimplifiedTitle() {
+		String [] arr = title.split(" ");
+		return arr[0] + arr[1];
+	}
 	/**
 	 * @param title the title to set
 	 */
@@ -42,47 +149,20 @@ public class Course {
 		this.title = title;
 	}
 
+	
+	/*
+	 *  Description
+	 */
 	/**
 	 * @return the description
 	 */
 	public String getDescription() {
 		return description;
 	}
-
 	/**
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	/**
-	 * @return the exclusion
-	 */
-	public String getExclusion() {
-		return exclusion;
-	}
-
-	/**
-	 * @param exclusion the exclusion to set
-	 */
-	public void setExclusion(String exclusion) {
-		this.exclusion = exclusion;
-	}
-
-	/**
-	 * @return the numSlots
-	 */
-	public int getNumSlots() {
-		return numSlots;
-	}
-
-	/**
-	 * @param numSlots the numSlots to set
-	 */
-	public void setNumSlots(int numSlots) {
-		this.numSlots = numSlots;
-	}
-	
-
 }
