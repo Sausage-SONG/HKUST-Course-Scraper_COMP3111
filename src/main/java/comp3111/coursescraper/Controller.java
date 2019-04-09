@@ -1,9 +1,11 @@
 package comp3111.coursescraper;
 
 
-import java.awt.event.ActionEvent;
+//import java.awt.event.ActionEvent;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -48,6 +50,45 @@ public class Controller {
 
     @FXML
     private Tab tabFilter;
+    
+//A series of Checkbox obj [Task2]
+    @FXML
+    private CheckBox CheckboxAM;
+
+    @FXML
+    private CheckBox CheckboxPM;
+
+    @FXML
+    private CheckBox CheckboxMon;
+
+    @FXML
+    private CheckBox CheckboxTue;
+
+    @FXML
+    private CheckBox CheckboxWed;
+
+    @FXML
+    private CheckBox CheckboxThu;
+
+    @FXML
+    private CheckBox CheckboxFri;
+
+    @FXML
+    private CheckBox CheckboxSat;
+
+    @FXML
+    private CheckBox CheckboxCC;
+
+    @FXML
+    private CheckBox CheckboxNoEx;
+
+    @FXML
+    private CheckBox CheckboxWithLabs;
+    
+    @FXML
+    private Button BtnSelectAll;
+    
+ //[Modified by nxy]
 
     @FXML
     private Tab tabList;
@@ -91,6 +132,7 @@ public class Controller {
     }
     
     private static List<Course> courses = new Vector<Course>();
+    private static List<Section> filteredSections = new Vector<Section>();
     private static List<Section> enrolledSections = new Vector<Section>();
 
     @FXML
@@ -178,4 +220,88 @@ public class Controller {
     		}
     	}
     }
+    
+    
+    //Task2
+    @FXML
+    public void SelectDeselectAll() {
+    	final CheckBox[] ListAll = {CheckboxAM, CheckboxPM,CheckboxMon,CheckboxTue,CheckboxWed,CheckboxThu,CheckboxFri,
+    			CheckboxSat,CheckboxCC,CheckboxNoEx,CheckboxWithLabs};
+    	if(BtnSelectAll.getText().contentEquals("Select All"))
+    		{BtnSelectAll.setText("De-select All");
+    		 for (int i=0; i<ListAll.length;i++) {
+    			ListAll[i].selectedProperty().set(true);
+    		 }
+    		}
+    	
+    	else if(BtnSelectAll.getText().contentEquals("De-select All"))
+    		{BtnSelectAll.setText("Select All");
+    		 for (int i=0; i<ListAll.length;i++) {
+			 ListAll[i].selectedProperty().set(false);
+		     }
+    		}
+    	refreshCheckBox();
+    }
+    
+    
+    
+    public void refreshCheckBox() {
+    	Vector<boolean[]> flags=new Vector<boolean[]>();
+    	// For every section in the courses list, create a boolean array
+    	for (Course item: courses) {
+    		for (int i=0;i<item.getNumSections();i++) {
+    			boolean [] innerflags= {false,false,false,false,false,false,false,false,false,false,false,true};
+    			if(item.is4YCC()) innerflags[8]=true;
+    			if(item.getExclusion()==null) innerflags[9]=true;
+    			if(item.hasLabOrTuto()) innerflags[10]=true;
+    			for(int j=0;j<item.getSection(i).getNumSlots();j++) {
+    				if(item.getSection(i).getSlot(j).isAM()) innerflags[0]=true;
+    				if(item.getSection(i).getSlot(j).isPM()) innerflags[1]=true;
+    				for (int temp=0;temp<6;temp++)
+    				{
+    					if(item.getSection(i).getSlot(j).isOn(temp)) innerflags[2+temp]=true;
+    				}
+    				
+    			}
+    			flags.add(innerflags);
+    		}
+    	}
+    	
+    	
+    	
+    	//check whether the section satisfy the CheckBox, store boolean value in item[11]
+    	final CheckBox[] ListAll = {CheckboxAM, CheckboxPM,CheckboxMon,CheckboxTue,CheckboxWed,CheckboxThu,CheckboxFri,
+    			CheckboxSat,CheckboxCC,CheckboxNoEx,CheckboxWithLabs};
+    	for (int i=0;i<ListAll.length;i++) {
+    		if(ListAll[i].selectedProperty().get()) {
+    			for (boolean[] item: flags) {
+    				if(item[i]==false) item[11]=false; 
+    			}
+    		}
+    	}
+    	
+    	//store the filtered Sections in the array filteredSections
+    	filteredSections.clear();
+    	int i=0;
+    	for(Course item: courses){
+    		for (int temp=0; temp<item.getNumSections(); temp++) {
+    			if (flags.get(i)[11]) filteredSections.add(item.getSection(temp));
+    			i++;
+    		}
+    	}
+    	
+    	//print all the filtered Sections
+    	textAreaConsole.clear();
+    	for (Section sectionitem:filteredSections) {
+    		String newline = sectionitem.getParent().getTitle()+'\t'+sectionitem.getSectionTitle()+"\n";
+    		for (int j = 0; j < sectionitem.getNumSlots(); ++j) {
+				newline += sectionitem.getSlot(j);
+			}
+    		textAreaConsole.setText(textAreaConsole.getText() + newline +'\n');
+    	}	
+    }
+    
+    
+ 
 }
+
