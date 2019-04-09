@@ -252,7 +252,7 @@ public class Controller {
     		for (int i=0;i<item.getNumSections();i++) {
     			boolean [] innerflags= {false,false,false,false,false,false,false,false,false,false,false,true};
     			if(item.is4YCC()) innerflags[8]=true;
-    			if(item.getExclusion()==null) innerflags[9]=true;
+                      if(!item.hasExclusion()) innerflags[9] = true;
     			if(item.hasLabOrTuto()) innerflags[10]=true;
     			for(int j=0;j<item.getSection(i).getNumSlots();j++) {
     				if(item.getSection(i).getSlot(j).isAM()) innerflags[0]=true;
