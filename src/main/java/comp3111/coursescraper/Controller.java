@@ -170,6 +170,9 @@ public class Controller {
     	for (int i = 0; i < 3; ++i) 
     		RGB[i] = (RGB[i] + increase[i]) % 256;
     }
+    /**
+     *  update timetable, should be called whenever enrolled section list is changed.
+     */
     public void updateTimetable() {
     	// first remove all existing labels
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
