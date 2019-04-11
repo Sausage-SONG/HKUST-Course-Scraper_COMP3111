@@ -1,6 +1,7 @@
 package comp3111.coursescraper;
 
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextArea;
 import comp3111.coursescraper.Controller;
 
 public class Section {
@@ -10,6 +11,7 @@ public class Section {
 	private Slot [] slots;
 	private int numSlots;
 	private Course parent;
+	private Boolean enrolled;
 	
 	public Section() {
 		slots = new Slot[DEFAULT_MAX_SLOT];
@@ -17,6 +19,7 @@ public class Section {
 		numSlots = 0;
 		sectionTitle = "";
 		parent = null;
+		enrolled= false;
 	}
 	
 	
@@ -157,18 +160,15 @@ public class Section {
 		return s;
 	}
 	
-	public CheckBox getEnrollCheckbox() {
-		CheckBox cb = new CheckBox();
-		cb.selectedProperty().set(false);
-		if(Controller.enrolledSections.contains(this)) cb.selectedProperty().set(true);
-		cb.setOnAction(event ->{
-			if(cb.selectedProperty().get()) {
-				Controller.enrolledSections.add(this);
-			}
-			else if(!cb.selectedProperty().get() && Controller.enrolledSections.contains(this)) Controller.enrolledSections.remove(this);
-		});
-		return cb;
+	
+	public Boolean getEnrolled() {
+		return enrolled;
 	}
+	
+	public void setEnrolled(boolean b) {
+		enrolled=b;
+	}
+
 	
 	
 	
