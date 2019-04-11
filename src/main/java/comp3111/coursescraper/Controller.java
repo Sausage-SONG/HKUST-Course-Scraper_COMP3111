@@ -27,10 +27,11 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
+
 import javafx.util.Callback;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.value.ChangeListener;
-
+import javafx.scene.text.Font;
 import java.util.Random;
 
 import java.awt.Checkbox;
@@ -172,6 +173,9 @@ public class Controller {
     public static List<Section> enrolledSections = new Vector<Section>();
 
     @FXML
+    /*
+     *  Task 1: Search function for button "Search".
+     */
     void search() {
     	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
     	
@@ -211,52 +215,81 @@ public class Controller {
     	names += "\n";
     	textAreaConsole.setText(textAreaConsole.getText() + names);
     	
+    	// display details of each course
     	for (Course c : courses) {
     		String newline = c.getTitle() + "\n";
-    		int counter = 1;
+    		int counter = 0;
     		for (int i = 0; i < c.getNumSections(); i++) {
     			Section s = c.getSection(i);
     			for (int j = 0; j < s.getNumSlots(); ++j) {
     				Slot t = s.getSlot(j);
-    				newline += "Slot" + i + ": " + s.getSectionTitle() + "\t" + t + "\n";
+    				newline += "Slot" + " " + (counter++) + ": " + s.getSectionTitle() + "\t" + t + "\n";
     			}
     		}
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}
-    	
-    	//Add a random block on Saturday
-    	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
-    	Label randomLabel = new Label("COMP1022\nL1");
-    	Random r = new Random();
-    	double start = (r.nextInt(10) + 1) * 20 + 40;
-
-    	randomLabel.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, Insets.EMPTY)));
-    	randomLabel.setLayoutX(600.0);
-    	randomLabel.setLayoutY(start);
-    	randomLabel.setMinWidth(100.0);
-    	randomLabel.setMaxWidth(100.0);
-    	randomLabel.setMinHeight(60);
-    	randomLabel.setMaxHeight(60);
-    
-    	ap.getChildren().addAll(randomLabel); 	
     }
     
-    // update timetable accordingly after enrolled course list is updated
+
+
+    /*
+     *  Task 4: Update the timetable whenever the enrolled sections list is updated.
+     */
+    private static List<Label> labels = new Vector<Label>();
+    private static int[] RGB = new int[3];
+    // set random initial values for RGB
+    static {
+    	Random r = new Random();
+    	for (int i = 0; i < 3; ++i) RGB[i] = r.nextInt(256);
+    }
+    /**
+     *  update the RGB array, set a different value to each
+     */
+    private static void updateRGB() {
+    	int[] increase = {47,73,107};
+    	for (int i = 0; i < 3; ++i) 
+    		RGB[i] = (RGB[i] + increase[i]) % 256;
+    }
+    /**
+     *  update timetable, should be called whenever enrolled section list is changed.
+     */
     public void updateTimetable() {
-    	System.out.println("hello");
+    	// first remove all existing labels
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
-    	ap.getChildren().remove(0, enrolledSections.size());
-    	Label[] labels = new Label[enrolledSections.size()];
+    	ap.getChildren().removeAll(labels);
+    	labels.clear();
+    	
+    	// then create new labels for each section
     	for (int i = 0; i < enrolledSections.size(); ++i) {
     		System.out.println(enrolledSections.get(i).getCourseCode());
     		Section s = enrolledSections.get(i);
+    		
+    		// prepare the label name and the color, as these are shared by slots from the same section
     		String labelName = s.getParent().getSimplifiedTitle() + "\n" + s.getSimplifiedTitle();
+    		updateRGB();
+    		
+    		// create a label for each slot, set attributes
     		for (int j = 0; j < s.getNumSlots(); ++j) {
     			Slot slot = s.getSlot(j);
     			Label label = new Label(labelName);
+    			//label.setFont(new Font(7));
+    			label.setBackground(new Background(new BackgroundFill(Color.rgb(RGB[0], RGB[1], RGB[2], 0.7), CornerRadii.EMPTY, Insets.EMPTY)));
+    	    	label.setLayoutX((slot.getDay()+1)*100);
+    	    	label.setLayoutY((float)20*(slot.getStart().getHour()-9+(float)slot.getStart().getMinute()/60)+40);
+    			label.setMinWidth(100.0);
+    	    	label.setMaxWidth(100.0);
+    	    	label.setMinHeight((float)20*((slot.getEnd().getHour()+(float)slot.getEnd().getMinute()/60)-
+    	    									  (slot.getStart().getHour()+(float)slot.getStart().getMinute()/60)));
+    	    	label.setMaxHeight((float)20*((slot.getEnd().getHour()+(float)slot.getEnd().getMinute()/60)-
+						  		   (slot.getStart().getHour()+(float)slot.getStart().getMinute()/60)));
     			
+    	    	// after finishing, add this label to the label list
+    			labels.add(label);
     		}
     	}
+    	
+    	// add all labels from the label list to the anchor pane
+    	ap.getChildren().addAll(labels);
     }
     
     
@@ -294,6 +327,7 @@ public class Controller {
     		if(!item.hasExclusion()) innerflags[9]=true;
     		if(item.hasLabOrTuto()) innerflags[10]=true;
     		for (int i=0;i<item.getNumSections();i++) {
+
     			for(int j=0;j<item.getSection(i).getNumSlots();j++) {
     				if(item.getSection(i).getSlot(j).isAM()) innerflags[0]=true;
     				if(item.getSection(i).getSlot(j).isPM()) innerflags[1]=true;

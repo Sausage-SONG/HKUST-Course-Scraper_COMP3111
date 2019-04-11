@@ -1,10 +1,32 @@
 # HKUST Course Scraper
-The course project of HKUST 2019Spring COMP3111: Software Engineering Project.
-
+The course project of HKUST 2019Spring COMP3111: Software Engineering Project.  
 Members of Group30:
 - NI Xiaoyuan
 - LI Mengxuan
 - SONG Sizhe
+
+# Emails regarding Project Tasks
+## Task 4: Timetable
+### Sent by SONG Sizhe  
+> I’m working on our project task4 – the timetable, and I have two questions about the label text.  
+>  
+> ![](doc-img/timetable_screenshot_1.jpg)  
+>  
+> As you can see, since some of the slots are only 50 minutes long, their labels may be quite short in height so that the space is not  enough to display the two-line label name. I did try to use a smaller font size but it’s not so satisfying.  
+>  
+> ![](doc-img/timetable_screenshot_2.jpg)  
+>  
+> Should I just make the label names one-line? Or should I try anything else?  
+>  
+> ![](doc-img/overlapped.png)  
+>  
+> And one more question. In project description, it mentioned when two slots overlap, the solution should be like in the picture above. Then, what if two slots have a large overlapping area, or even exactly the same time period, then their label names will also overlap, making them hard to read. What should I do in this situation?  
+
+### Replied by Kevin
+> 1. Font size problem. Small size is not a problem since the spec does not specify on the size of the font as long as it is readable. Two lines is a specification and should be obey for most of the case. In your example COMP1021 LA1 is good. If you want to change the fonts of COMP1022P or make it single line due to space limit, it is acceptable given that you keep some normal slot like COMP1021 LA1 in two lines.  
+In short, the second screen shot given is OK.  
+>  
+> 2. Overlap issue. Don’t over complicate the issue. The spec says overlap and it will cause reading problem anyway. So it is ok to make it difficult to read.  
 
 # Project Details:
 
