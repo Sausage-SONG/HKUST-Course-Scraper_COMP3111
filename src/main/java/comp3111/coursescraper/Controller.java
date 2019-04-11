@@ -364,12 +364,12 @@ public class Controller {
     	textAreaConsole.clear();
     	for (Course c : filteredCourses) {
     		String newline = c.getTitle() + "\n";
-    		int counter = 1;
+    		int counter = 0;
     		for (int i = 0; i < c.getNumSections(); i++) {
     			Section s = c.getSection(i);
     			for (int j = 0; j < s.getNumSlots(); ++j) {
     				Slot t = s.getSlot(j);
-    				newline += "Slot" + i + ": " + s.getSectionTitle() + "\t" + t + "\n";
+    				newline += "Slot" + " " + (counter++) + ": " + s.getSectionTitle() + "\t" + t + "\n";
     			}
     		}
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
