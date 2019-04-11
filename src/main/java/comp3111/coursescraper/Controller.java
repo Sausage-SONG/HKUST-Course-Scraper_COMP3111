@@ -3,12 +3,13 @@ package comp3111.coursescraper;
 
 
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+
 //import java.awt.event.ActionEvent;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableView;
@@ -26,9 +27,14 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.geometry.Insets;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
+import javafx.util.Callback;
+import javafx.beans.value.ObservableValue;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.text.Font;
 import java.util.Random;
+
+import java.awt.Checkbox;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -113,7 +119,7 @@ public class Controller {
     private TableColumn<Section, String> InstructorColumn;
 
     @FXML
-    private TableColumn<Section, CheckBox> EnrollColumn;
+    private TableColumn<Section,CheckBox> EnrollColumn;
     
  //[Modified by nxy]
 
@@ -158,7 +164,11 @@ public class Controller {
 
     }
     
+    
+    
+    
     private static List<Course> courses = new Vector<Course>();
+    private static List<Course> filteredCourses = new Vector<Course>();
     private static List<Section> filteredSections = new Vector<Section>();
     public static List<Section> enrolledSections = new Vector<Section>();
 
@@ -220,6 +230,7 @@ public class Controller {
     	}
     }
     
+
 
     /*
      *  Task 4: Update the timetable whenever the enrolled sections list is updated.
@@ -304,17 +315,19 @@ public class Controller {
     }
     
     
-    
+    public void RefreshFilter() {
+    	
+    }
     public void refreshCheckBox() {
     	Vector<boolean[]> flags=new Vector<boolean[]>();
     	// For every section in the courses list, create a boolean array
     	for (Course item: courses) {
+    		boolean [] innerflags= {false,false,false,false,false,false,false,false,false,false,false,true};
+    		if(item.is4YCC()) innerflags[8]=true;
+    		if(!item.hasExclusion()) innerflags[9]=true;
+    		if(item.hasLabOrTuto()) innerflags[10]=true;
     		for (int i=0;i<item.getNumSections();i++) {
-    			boolean [] innerflags= {false,false,false,false,false,false,false,false,false,false,false,true};
-    			if(item.is4YCC()) innerflags[8]=true;
-    			if(!item.hasExclusion()) innerflags[9]=true;
-    			if(item.hasLabOrTuto()) innerflags[10]=true;
-          
+
     			for(int j=0;j<item.getSection(i).getNumSlots();j++) {
     				if(item.getSection(i).getSlot(j).isAM()) innerflags[0]=true;
     				if(item.getSection(i).getSlot(j).isPM()) innerflags[1]=true;
@@ -324,8 +337,8 @@ public class Controller {
     				}
     				
     			}
-    			flags.add(innerflags);
     		}
+    		flags.add(innerflags);
     	}
     	
     	
@@ -341,46 +354,87 @@ public class Controller {
     		}
     	}
     	
-    	//store the filtered Sections in the array filteredSections
-    	filteredSections.clear();
-    	int i=0;
-    	for(Course item: courses){
-    		for (int temp=0; temp<item.getNumSections(); temp++) {
-    			if (flags.get(i)[11]) filteredSections.add(item.getSection(temp));
-    			i++;
-    		}
+    	//store the filtered Sections in the array filteredCourses
+    	filteredCourses.clear();
+    	for(int i=0; i<courses.size();i++){
+    			if (flags.get(i)[11]) filteredCourses.add(courses.get(i));
     	}
     	
     	//print all the filtered Sections
     	textAreaConsole.clear();
-    	for (Section sectionitem:filteredSections) {
-    		String newline = sectionitem.getParent().getTitle()+'\t'+sectionitem.getSectionTitle()+"\n";
-    		for (int j = 0; j < sectionitem.getNumSlots(); ++j) {
-				newline += sectionitem.getSlot(j);
-			}
-    		textAreaConsole.setText(textAreaConsole.getText() + newline +'\n');
-    	}	
+    	for (Course c : filteredCourses) {
+    		String newline = c.getTitle() + "\n";
+    		int counter = 1;
+    		for (int i = 0; i < c.getNumSections(); i++) {
+    			Section s = c.getSection(i);
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot t = s.getSlot(j);
+    				newline += "Slot" + i + ": " + s.getSectionTitle() + "\t" + t + "\n";
+    			}
+    		}
+    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
+    	}
     }
     
     public void createTable() {
+    	filteredSections.clear();
+    	for(Course item: filteredCourses) {
+    		for(int p=0;p<item.getNumSections();p++) {
+    			filteredSections.add(item.getSection(p));
+    		}
+    	}
     	
     	SectionTable.getItems().clear();
+    	
     	for (Section item:filteredSections) {
     		
     		CourseCodeColumn.setCellValueFactory(new PropertyValueFactory<>("CourseCode"));
     		SectionColumn.setCellValueFactory(new PropertyValueFactory<>("sectionName"));
         	CourseNameColumn.setCellValueFactory(new PropertyValueFactory<>("CourseName"));
         	InstructorColumn.setCellValueFactory(new PropertyValueFactory<>("instructorList"));
-        	EnrollColumn.setCellValueFactory(new PropertyValueFactory<>("EnrollCheckbox"));
+        	
+        	
+        	
+        	EnrollColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Section, CheckBox>, ObservableValue<CheckBox>>() {
+
+                @Override
+                public ObservableValue<CheckBox> call(TableColumn.CellDataFeatures<Section, CheckBox> arg0) {
+                    Section se = arg0.getValue();
+                  
+                    CheckBox checkBox = new CheckBox();
+
+                    checkBox.selectedProperty().setValue(se.getEnrolled());
+
+
+
+                    checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                        public void changed(ObservableValue<? extends Boolean> ov,
+                                Boolean old_val, Boolean new_val) {
+
+                            se.setEnrolled(new_val);
+                            if(new_val) enrolledSections.add(se);
+                            else if(!new_val && enrolledSections.contains(se)) enrolledSections.remove(se);
+                            textAreaConsole.clear();
+                        	textAreaConsole.setText("The following sections are enrolled:"+'\n');
+                        	for (Section item: enrolledSections) {
+                        		String newline = item.getCourseCode();
+                        		newline = newline + '\t'+ item.getCourseName() + '\t' +item.getSectionTitle();
+                        		
+                        		textAreaConsole.setText(textAreaConsole.getText()+'\n'+ newline);
+                        	}
+
+                        }
+                    });
+
+                    return new SimpleObjectProperty<CheckBox>(checkBox);
+
+                }
+
+            });
+
+        	
         	SectionTable.getItems().add(item);
-    		
-    		
     	}
-    	
-    	
-    	
- 
     }
- 
 }
 
