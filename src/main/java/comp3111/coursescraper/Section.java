@@ -1,5 +1,8 @@
 package comp3111.coursescraper;
 
+import javafx.scene.control.CheckBox;
+import comp3111.coursescraper.Controller;
+
 public class Section {
 	private static final int DEFAULT_MAX_SLOT = 2;
 	
@@ -127,4 +130,45 @@ public class Section {
 		}
 		return false;
 	}
+	
+	// NXY Special String
+	public String getCourseCode() {
+		return this.getParent().getSimplifiedTitle();
+	}
+	
+	public String getSectionName() {
+		String[] arr = this.getSectionTitle().split("\\(");
+		return arr[0];
+	}
+	
+	public String getCourseName() {
+		String [] arr = this.getParent().getTitle().split("-");
+		String s = arr[1];
+		String [] arrtwo=s.split("\\(");
+		return arrtwo[0];
+	}
+	
+	public String getInstructorList() {
+		if (this.numSlots==0) return "N/A";
+		String s = this.getSlot(0).getInstName();
+		for(int i=1; i<this.numSlots ;i++) {
+			if(!s.contains(this.getSlot(i).getInstName())) s = s + ", " + this.getSlot(i).getInstName();
+		}
+		return s;
+	}
+	
+	public CheckBox getEnrollCheckbox() {
+		CheckBox cb = new CheckBox();
+		cb.selectedProperty().set(false);
+		if(Controller.enrolledSections.contains(this)) cb.selectedProperty().set(true);
+		cb.setOnAction(event ->{
+			if(cb.selectedProperty().get()) Controller.enrolledSections.add(this);
+			else if(!cb.selectedProperty().get() && Controller.enrolledSections.contains(this)) Controller.enrolledSections.remove(this);
+		});
+		return cb;
+	}
+	
+	
+	
+	
 }
