@@ -162,7 +162,9 @@ public class Section {
 		cb.selectedProperty().set(false);
 		if(Controller.enrolledSections.contains(this)) cb.selectedProperty().set(true);
 		cb.setOnAction(event ->{
-			if(cb.selectedProperty().get()) Controller.enrolledSections.add(this);
+			if(cb.selectedProperty().get()) {
+				Controller.enrolledSections.add(this);
+			}
 			else if(!cb.selectedProperty().get() && Controller.enrolledSections.contains(this)) Controller.enrolledSections.remove(this);
 		});
 		return cb;

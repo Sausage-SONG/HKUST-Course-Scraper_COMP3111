@@ -233,10 +233,12 @@ public class Controller {
     
     // update timetable accordingly after enrolled course list is updated
     public void updateTimeTable() {
+    	System.out.println("hello");
     	AnchorPane ap = (AnchorPane)tabTimetable.getContent();
     	ap.getChildren().remove(0, enrolledSections.size());
     	Label[] labels = new Label[enrolledSections.size()];
     	for (int i = 0; i < enrolledSections.size(); ++i) {
+    		System.out.println(enrolledSections.get(i).getCourseCode());
     		Section s = enrolledSections.get(i);
     		String labelName = s.getParent().getSimplifiedTitle() + "\n" + s.getSimplifiedTitle();
     		for (int j = 0; j < s.getNumSlots(); ++j) {
@@ -335,7 +337,6 @@ public class Controller {
     		CourseCodeColumn.setCellValueFactory(new PropertyValueFactory<>("CourseCode"));
     		SectionColumn.setCellValueFactory(new PropertyValueFactory<>("sectionName"));
         	CourseNameColumn.setCellValueFactory(new PropertyValueFactory<>("CourseName"));
-        	System.out.println(item.getInstructorList());
         	InstructorColumn.setCellValueFactory(new PropertyValueFactory<>("instructorList"));
         	EnrollColumn.setCellValueFactory(new PropertyValueFactory<>("EnrollCheckbox"));
         	SectionTable.getItems().add(item);
