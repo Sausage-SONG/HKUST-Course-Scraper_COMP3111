@@ -1,12 +1,20 @@
 package comp3111.coursescraper;
 
 
+
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 //import java.awt.event.ActionEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
@@ -89,6 +97,24 @@ public class Controller {
     @FXML
     private Button BtnSelectAll;
     
+    @FXML
+    private TableView<Section> SectionTable;
+    
+    @FXML
+    private TableColumn<Section, String> CourseCodeColumn;
+
+    @FXML
+    private TableColumn<Section, String> SectionColumn;
+
+    @FXML
+    private TableColumn<Section, String> CourseNameColumn;
+
+    @FXML
+    private TableColumn<Section, String> InstructorColumn;
+
+    @FXML
+    private TableColumn<Section, CheckBox> EnrollColumn;
+    
  //[Modified by nxy]
 
     @FXML
@@ -134,7 +160,7 @@ public class Controller {
     
     private static List<Course> courses = new Vector<Course>();
     private static List<Section> filteredSections = new Vector<Section>();
-    private static List<Section> enrolledSections = new Vector<Section>();
+    public static List<Section> enrolledSections = new Vector<Section>();
 
     @FXML
     /*
@@ -194,6 +220,7 @@ public class Controller {
     	}
     }
     
+
     /*
      *  Task 4: Update the timetable whenever the enrolled sections list is updated.
      */
@@ -223,6 +250,7 @@ public class Controller {
     	
     	// then create new labels for each section
     	for (int i = 0; i < enrolledSections.size(); ++i) {
+    		System.out.println(enrolledSections.get(i).getCourseCode());
     		Section s = enrolledSections.get(i);
     		
     		// prepare the label name and the color, as these are shared by slots from the same section
@@ -284,8 +312,9 @@ public class Controller {
     		for (int i=0;i<item.getNumSections();i++) {
     			boolean [] innerflags= {false,false,false,false,false,false,false,false,false,false,false,true};
     			if(item.is4YCC()) innerflags[8]=true;
-                      if(!item.hasExclusion()) innerflags[9] = true;
+    			if(!item.hasExclusion()) innerflags[9]=true;
     			if(item.hasLabOrTuto()) innerflags[10]=true;
+          
     			for(int j=0;j<item.getSection(i).getNumSlots();j++) {
     				if(item.getSection(i).getSlot(j).isAM()) innerflags[0]=true;
     				if(item.getSection(i).getSlot(j).isPM()) innerflags[1]=true;
@@ -333,7 +362,25 @@ public class Controller {
     	}	
     }
     
-    
+    public void createTable() {
+    	
+    	SectionTable.getItems().clear();
+    	for (Section item:filteredSections) {
+    		
+    		CourseCodeColumn.setCellValueFactory(new PropertyValueFactory<>("CourseCode"));
+    		SectionColumn.setCellValueFactory(new PropertyValueFactory<>("sectionName"));
+        	CourseNameColumn.setCellValueFactory(new PropertyValueFactory<>("CourseName"));
+        	InstructorColumn.setCellValueFactory(new PropertyValueFactory<>("instructorList"));
+        	EnrollColumn.setCellValueFactory(new PropertyValueFactory<>("EnrollCheckbox"));
+        	SectionTable.getItems().add(item);
+    		
+    		
+    	}
+    	
+    	
+    	
+ 
+    }
  
 }
 

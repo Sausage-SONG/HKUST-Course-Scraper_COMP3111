@@ -75,17 +75,17 @@
                         </AnchorPane>
                   </content>
                 </Tab>
-                  <Tab fx:id="tabList" text="List">
+                  <Tab fx:id="tabList" onSelectionChanged="#createTable" text="List">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="318.0" prefWidth="719.0">
                            <children>
-                              <TableView prefHeight="281.0" prefWidth="719.0">
+                              <TableView fx:id="SectionTable" prefHeight="281.0" prefWidth="719.0">
                                 <columns>
-                                  <TableColumn prefWidth="91.0" text="Course Code" />
-                                    <TableColumn prefWidth="108.0" text="Section" />
-                                  <TableColumn prefWidth="271.0" text="Course Name" />
-                                    <TableColumn prefWidth="152.0" text="Instructor" />
-                                    <TableColumn prefWidth="96.0" text="Enroll" />
+                                  <TableColumn fx:id="CourseCodeColumn" prefWidth="91.0" text="Course Code" />
+                                    <TableColumn fx:id="SectionColumn" prefWidth="108.0" text="Section" />
+                                  <TableColumn fx:id="CourseNameColumn" prefWidth="271.0" text="Course Name" />
+                                    <TableColumn fx:id="InstructorColumn" prefWidth="152.0" text="Instructor" />
+                                    <TableColumn fx:id="EnrollColumn" prefWidth="96.0" text="Enroll" />
                                 </columns>
                               </TableView>
                               <Label layoutX="22.0" layoutY="281.0" text="*Fill the table according to the result of the Filter. If the Filter cannot be correctly implemented, show all result scrapped." />
@@ -94,7 +94,7 @@
                         </AnchorPane>
                     </content>
                   </Tab>
-                  <Tab fx:id="tabTimetable" text="Timetable">
+                  <Tab fx:id="tabTimetable" onSelectionChanged="#updateTimeTable" text="Timetable">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="412.0" prefWidth="719.0">
                            <children>
