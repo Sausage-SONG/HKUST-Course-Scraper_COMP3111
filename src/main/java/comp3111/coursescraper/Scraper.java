@@ -90,12 +90,12 @@ public class Scraper {
 		client.getOptions().setJavaScriptEnabled(false);
 	}
 
-	private void addSlot(HtmlElement e, Section s, boolean secondRow) {
+	private boolean addSlot(HtmlElement e, Section s, boolean secondRow) {
 		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split(" ");
 		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
 		String name = e.getChildNodes().get(secondRow ? 2 : 5).getChildNodes().get(0).asText();
 		if (times[0].equals("TBA"))
-			return;
+			return false;
 		for (int j = 0; j < times[0].length(); j+=2) {
 			String code = times[0].substring(j , j + 2);
 			if (Slot.DAYS_MAP.get(code) == null)
@@ -108,7 +108,7 @@ public class Scraper {
 			slot.setVenue(venue);
 			s.addSlot(slot);
 		}
-
+		return true;
 	}
 
 	public List<Course> scrape(String baseurl, String term, String sub) {
@@ -149,11 +149,12 @@ public class Scraper {
 				for ( HtmlElement e: (List<HtmlElement>)sections) {
 					Section section = new Section();
 					section.setSectionTitle(e.getChildNodes().get(1).asText());
-					addSlot(e, section, false);
-					e = (HtmlElement)e.getNextSibling();
-					if (e != null && !e.getAttribute("class").contains("newsect"))
-						addSlot(e, section, true);
-					c.addSection(section);
+					if(addSlot(e, section, false) == true) {
+						e = (HtmlElement)e.getNextSibling();
+						if (e != null && !e.getAttribute("class").contains("newsect"))
+							addSlot(e, section, true);
+						c.addSection(section);
+					}
 				}
 				
 				// a course is now complete, add to result list
