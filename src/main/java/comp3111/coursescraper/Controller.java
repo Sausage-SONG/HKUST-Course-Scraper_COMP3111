@@ -436,15 +436,5 @@ public class Controller {
         	SectionTable.getItems().add(item);
     	}
     }
- 
-    public void PrintonConsole() {
-    	textAreaConsole.clear();
-    	textAreaConsole.setText("The following sections are enrolled:"+'\n');
-    	for (Section item: enrolledSections) {
-    		String newline = item.getCourseCode();
-    		newline += item.getCourseName();
-    		textAreaConsole.setText(textAreaConsole.getText()+'\n'+ newline);
-    	}
-    }
 }
 
