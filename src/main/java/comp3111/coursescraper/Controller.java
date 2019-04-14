@@ -401,7 +401,7 @@ public class Controller {
                   
                     CheckBox checkBox = new CheckBox();
 
-                    checkBox.selectedProperty().setValue(true);
+                    checkBox.selectedProperty().setValue(se.getEnrolled());
 
 
 
