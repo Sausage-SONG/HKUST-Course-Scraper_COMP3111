@@ -145,7 +145,7 @@ public class Section {
 	}
 	
 	public String getCourseName() {
-		String [] arr = this.getParent().getTitle().split("-");
+		String [] arr = this.getParent().getTitle().split("-",2);
 		String s = arr[1];
 		String [] arrtwo=s.split("\\(");
 		return arrtwo[0];

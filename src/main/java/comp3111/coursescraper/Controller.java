@@ -315,9 +315,7 @@ public class Controller {
     }
     
     
-    public void RefreshFilter() {
-    	
-    }
+   
     public void refreshCheckBox() {
     	Vector<boolean[]> flags=new Vector<boolean[]>();
     	// For every section in the courses list, create a boolean array
@@ -403,7 +401,7 @@ public class Controller {
                   
                     CheckBox checkBox = new CheckBox();
 
-                    checkBox.selectedProperty().setValue(se.getEnrolled());
+                    checkBox.selectedProperty().setValue(true);
 
 
 
