@@ -1,5 +1,9 @@
 package comp3111.coursescraper;
 
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextArea;
+import comp3111.coursescraper.Controller;
+
 public class Section {
 	private static final int DEFAULT_MAX_SLOT = 2;
 	
@@ -7,6 +11,7 @@ public class Section {
 	private Slot [] slots;
 	private int numSlots;
 	private Course parent;
+	private Boolean enrolled;
 	
 	public Section() {
 		slots = new Slot[DEFAULT_MAX_SLOT];
@@ -14,6 +19,7 @@ public class Section {
 		numSlots = 0;
 		sectionTitle = "";
 		parent = null;
+		enrolled= false;
 	}
 	
 	
@@ -127,4 +133,44 @@ public class Section {
 		}
 		return false;
 	}
+	
+	// NXY Special String
+	public String getCourseCode() {
+		return this.getParent().getSimplifiedTitle();
+	}
+	
+	public String getSectionName() {
+		String[] arr = this.getSectionTitle().split("\\(");
+		return arr[0];
+	}
+	
+	public String getCourseName() {
+		String [] arr = this.getParent().getTitle().split("-",2);
+		String s = arr[1];
+		String [] arrtwo=s.split("\\(");
+		return arrtwo[0];
+	}
+	
+	public String getInstructorList() {
+		if (this.numSlots==0) return "N/A";
+		String s = this.getSlot(0).getInstName();
+		for(int i=1; i<this.numSlots ;i++) {
+			if(!s.contains(this.getSlot(i).getInstName())) s = s + ", " + this.getSlot(i).getInstName();
+		}
+		return s;
+	}
+	
+	
+	public Boolean getEnrolled() {
+		return enrolled;
+	}
+	
+	public void setEnrolled(boolean b) {
+		enrolled=b;
+	}
+
+	
+	
+	
+	
 }
