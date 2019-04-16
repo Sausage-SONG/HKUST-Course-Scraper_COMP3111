@@ -186,8 +186,8 @@ public class Controller {
     		number_of_courses  = courses.size();
     	for (Course c : courses)
     		number_of_sections += c.getNumSections();
-    	textAreaConsole.setText("Total Number of difference sections in this search: " + number_of_courses +
-    			                "\nTotal Number of Course in this search: " + number_of_sections + "\n");
+    	textAreaConsole.setText("Total Number of difference sections in this search: " + number_of_sections +
+    			                "\nTotal Number of Course in this search: " + number_of_courses + "\n");
     	
     	// find and display a list of instrutors who have teaching assignment but not at Tu 3:10PM
     	List<String> instructors = new Vector<String>();
