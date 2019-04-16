@@ -2,10 +2,10 @@ package comp3111.coursescraper;
 
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
-import comp3111.coursescraper.Controller;
+import java.util.List;
 
 public class Section {
-	private static final int DEFAULT_MAX_SLOT = 2;
+	private static final int DEFAULT_MAX_SLOT = 4;
 	
 	private String sectionTitle;
 	private Slot [] slots;
@@ -122,6 +122,17 @@ public class Section {
 	/*
 	 *  Section Type Boolean Test
 	 */
+	public static final char[] digit = {'0','1','2','3','4','5','6','7','8','9'};
+	/**
+	 * @param c a character
+	 * @return whether the character is a digit
+	 */
+	public static boolean isDigit(char c) {
+		for (int i = 0; i < 10; ++i)
+			if (c == digit[i])
+				return true;
+		return false;
+	}
 	/**
 	 * @return whether a section is a lab or a tutorial
 	 */
@@ -133,19 +144,28 @@ public class Section {
 		}
 		return false;
 	}
+	/**
+	 * @return whether the section is valid (valid format: L/T/LA + digit)
+	 */
+	public boolean isValid() {
+		if (sectionTitle.charAt(0) == 'T') {
+			return true;
+		} else if (sectionTitle.charAt(0) == 'L') {
+			if(isDigit(sectionTitle.charAt(1)))
+				return true;
+			else if (sectionTitle.charAt(1) == 'A' && isDigit(sectionTitle.charAt(2)))
+				return true;
+		}
+		return false;
+	}
 	
 	// NXY Special String
 	public String getCourseCode() {
 		return this.getParent().getSimplifiedTitle();
 	}
 	
-	public String getSectionName() {
-		String[] arr = this.getSectionTitle().split("\\(");
-		return arr[0];
-	}
-	
 	public String getCourseName() {
-		String [] arr = this.getParent().getTitle().split("-");
+		String [] arr = this.getParent().getTitle().split("-",2);
 		String s = arr[1];
 		String [] arrtwo=s.split("\\(");
 		return arrtwo[0];
@@ -153,24 +173,24 @@ public class Section {
 	
 	public String getInstructorList() {
 		if (this.numSlots==0) return "N/A";
-		String s = this.getSlot(0).getInstName();
-		for(int i=1; i<this.numSlots ;i++) {
-			if(!s.contains(this.getSlot(i).getInstName())) s = s + ", " + this.getSlot(i).getInstName();
+		String result = "";
+		for (int i = 0; i < numSlots; ++i) {
+			List<String> names = this.getSlot(i).getInstName();
+			for (String name : names) {
+				if (!result.contains(name))
+					result += (", " + name);
+			}
 		}
-		return s;
+		return result.substring(2, result.length());
 	}
 	
-	
+	/*
+	 *  Enrolled
+	 */
 	public Boolean getEnrolled() {
 		return enrolled;
 	}
-	
 	public void setEnrolled(boolean b) {
 		enrolled=b;
-	}
-
-	
-	
-	
-	
+	}	
 }
