@@ -1,12 +1,11 @@
 package comp3111.coursescraper;
 
 
-
 public class Course {
 	private static final int DEFAULT_MAX_SECTION = 80;
 	
-	private String title ; 
-	private String description ;
+	private String title; 
+	private String description;
 	private String exclusion;
 	private String commonCore;
 	private Section [] sections;
@@ -66,8 +65,12 @@ public class Course {
 	/**
 	 * @return whether a course has valid sections
 	 */
-	public boolean hasValidSection() {
-		return (numSections > 0) ? true : false;
+	public boolean isValid() {
+		for (int i = 0; i < numSections; ++i) {
+			if (this.getSection(i).isValid())
+				return true;
+		}
+		return false;
 	}
 	
 	
@@ -147,22 +150,5 @@ public class Course {
 	 */
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	
-	/*
-	 *  Description
-	 */
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
 	}
 }

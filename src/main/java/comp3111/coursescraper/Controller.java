@@ -1,9 +1,5 @@
 package comp3111.coursescraper;
 
-
-
-
-
 //import java.awt.event.ActionEvent;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.beans.property.ObjectProperty;
@@ -170,14 +166,14 @@ public class Controller {
     private static List<Course> courses = new Vector<Course>();
     private static List<Course> filteredCourses = new Vector<Course>();
     private static List<Section> filteredSections = new Vector<Section>();
-    public static List<Section> enrolledSections = new Vector<Section>();
+    private static List<Section> enrolledSections = new Vector<Section>();
 
     @FXML
     /*
      *  Task 1: Search function for button "Search".
      */
     void search() {
-    	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
+    	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText(), enrolledSections);
     	
     	// Handle 404
     	if (courses == null) {
@@ -187,11 +183,9 @@ public class Controller {
     	
     	// count and display # of courses and sections
     	int number_of_sections = 0,
-    		number_of_courses  = 0;
-    	for (Course c : courses) {
+    		number_of_courses  = courses.size();
+    	for (Course c : courses)
     		number_of_sections += c.getNumSections();
-    		number_of_courses  += (c.hasValidSection()) ? 1 : 0;
-    	}
     	textAreaConsole.setText("Total Number of difference sections in this search: " + number_of_courses +
     			                "\nTotal Number of Course in this search: " + number_of_sections + "\n");
     	
@@ -202,8 +196,10 @@ public class Controller {
     			Section s = c.getSection(i);
     			for (int j = 0; j < s.getNumSlots(); ++j) {
     				Slot slot = s.getSlot(j);
-    				if ((!slot.isOn(1) || !slot.include(15, 10)) && !instructors.contains(slot.getInstName()))
-    					instructors.add(slot.getInstName());
+    				if (!slot.isOn(1) || !slot.include(15, 10))
+    					for (String name : slot.getInstName())
+    						if (!instructors.contains(name))
+    							instructors.add(name);
     			}
     		}
     	}
@@ -261,7 +257,6 @@ public class Controller {
     	
     	// then create new labels for each section
     	for (int i = 0; i < enrolledSections.size(); ++i) {
-    		System.out.println(enrolledSections.get(i).getCourseCode());
     		Section s = enrolledSections.get(i);
     		
     		// prepare the label name and the color, as these are shared by slots from the same section
@@ -313,8 +308,6 @@ public class Controller {
     		}
     	refreshCheckBox();
     }
-    
-    
    
     public void refreshCheckBox() {
     	Vector<boolean[]> flags=new Vector<boolean[]>();
@@ -338,9 +331,7 @@ public class Controller {
     		}
     		flags.add(innerflags);
     	}
-    	
-    	
-    	
+    		
     	//check whether the section satisfy the CheckBox, store boolean value in item[11]
     	final CheckBox[] ListAll = {CheckboxAM, CheckboxPM,CheckboxMon,CheckboxTue,CheckboxWed,CheckboxThu,CheckboxFri,
     			CheckboxSat,CheckboxCC,CheckboxNoEx,CheckboxWithLabs};
@@ -387,12 +378,10 @@ public class Controller {
     	for (Section item:filteredSections) {
     		
     		CourseCodeColumn.setCellValueFactory(new PropertyValueFactory<>("CourseCode"));
-    		SectionColumn.setCellValueFactory(new PropertyValueFactory<>("sectionName"));
+    		SectionColumn.setCellValueFactory(new PropertyValueFactory<>("SimplifiedTitle"));
         	CourseNameColumn.setCellValueFactory(new PropertyValueFactory<>("CourseName"));
         	InstructorColumn.setCellValueFactory(new PropertyValueFactory<>("instructorList"));
-        	
-        	
-        	
+        		
         	EnrollColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Section, CheckBox>, ObservableValue<CheckBox>>() {
 
                 @Override
@@ -402,8 +391,6 @@ public class Controller {
                     CheckBox checkBox = new CheckBox();
 
                     checkBox.selectedProperty().setValue(se.getEnrolled());
-
-
 
                     checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
                         public void changed(ObservableValue<? extends Boolean> ov,
@@ -420,17 +407,11 @@ public class Controller {
                         		
                         		textAreaConsole.setText(textAreaConsole.getText()+'\n'+ newline);
                         	}
-
                         }
                     });
-
                     return new SimpleObjectProperty<CheckBox>(checkBox);
-
                 }
-
             });
-
-        	
         	SectionTable.getItems().add(item);
     	}
     }

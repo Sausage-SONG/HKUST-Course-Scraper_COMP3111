@@ -5,13 +5,15 @@ import java.util.HashMap;
 import java.time.LocalTime;
 import java.util.Locale;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Vector;
 
 public class Slot {
 	private int day;
 	private LocalTime start;
 	private LocalTime end;
 	private String venue;
-	private String instName;
+	private List<String> instName;
 	private Section parent;
 	public static final String DAYS[] = {"Mo", "Tu", "We", "Th", "Fr", "Sa"};
 	public static final Map<String, Integer> DAYS_MAP = new HashMap<String, Integer>();
@@ -20,6 +22,7 @@ public class Slot {
 			DAYS_MAP.put(DAYS[i], i);
 	}
 
+	public Slot() { instName = new Vector<String>(); }
 	@Override
 	public Slot clone() {
 		Slot s = new Slot();
@@ -27,7 +30,7 @@ public class Slot {
 		s.start = this.start;
 		s.end = this.end;
 		s.venue = this.venue;
-		s.instName = this.instName;
+		s.instName = new Vector<String>(instName);
 		return s;
 	}
 	public String toString() {
@@ -41,11 +44,15 @@ public class Slot {
 	/**
 	 * @return the instructor's name
 	 */
-	public String getInstName() { return instName; }
+	public List<String> getInstName() { return instName; }
 	/**
-	 * @param name the instructor's name to set
+	 * @param name the instructor's name to add
 	 */
-	public void setInstName(String name) { instName = name; }
+	public void addInstName(String name) { instName.add(name); }
+	/**
+	 * @param names a list of strings (names)
+	 */
+	public void setInstName(List<String> names) { instName = names; }
 	
 	
 	/*
