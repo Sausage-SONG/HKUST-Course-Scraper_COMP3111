@@ -99,6 +99,8 @@ public class Scraper {
 		List<String> nameList = new Vector<String>();
 		for (HtmlElement item : (List<HtmlElement>)names)
 			nameList.add(item.asText());
+		if (nameList.isEmpty()) nameList.add("TBA");
+		
 		for (int j = 0; j < times[0].length(); j+=2) {
 			String code = times[0].substring(j , j + 2);
 			if (Slot.DAYS_MAP.get(code) == null)

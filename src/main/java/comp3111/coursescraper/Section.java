@@ -172,14 +172,16 @@ public class Section {
 	}
 	
 	public String getInstructorList() {
-		if (this.numSlots==0) return "N/A";
+		if (this.numSlots == 0) 
+			return "N/A";
 		String result = "";
 		for (int i = 0; i < numSlots; ++i) {
 			List<String> names = this.getSlot(i).getInstName();
-			for (String name : names) {
+			if (names.isEmpty())
+				continue;
+			for (String name : names)
 				if (!result.contains(name))
 					result += (", " + name);
-			}
 		}
 		return result.substring(2, result.length());
 	}
