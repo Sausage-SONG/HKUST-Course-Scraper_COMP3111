@@ -23,7 +23,7 @@ public class Slot {
 	}
 
 	public Slot() { instName = new Vector<String>(); }
-	@Override
+	/*@Override
 	public Slot clone() {
 		Slot s = new Slot();
 		s.day = this.day;
@@ -32,7 +32,7 @@ public class Slot {
 		s.venue = this.venue;
 		s.instName = new Vector<String>(instName);
 		return s;
-	}
+	}*/
 	public String toString() {
 		return DAYS[day] + " " + start.toString() + "-" + end.toString() + ": " + venue;
 	}

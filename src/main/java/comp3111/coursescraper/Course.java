@@ -16,6 +16,9 @@ public class Course {
 		for (int i = 0; i < DEFAULT_MAX_SECTION; i++) sections[i] = null;
 		numSections = 0;
 		commonCore = "";
+		exclusion = "";
+		description = "";
+		title = "";
 	}
 	
 	

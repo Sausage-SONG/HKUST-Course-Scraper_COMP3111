@@ -168,7 +168,7 @@ public class Section {
 		String [] arr = this.getParent().getTitle().split("-",2);
 		String s = arr[1];
 		String [] arrtwo=s.split("\\(");
-		return arrtwo[0];
+		return arrtwo[0].substring(0,arrtwo[0].length()-1);
 	}
 	
 	public String getInstructorList() {
