@@ -168,11 +168,64 @@ public class Controller {
     private static List<Section> filteredSections = new Vector<Section>();
     private static List<Section> enrolledSections = new Vector<Section>();
 
-    @FXML
     /*
      *  Task 1: Search function for button "Search".
      */
-    void search() {
+    /**
+     * @return return a string of information required by task 1 (# of courses, # of sections, instructors' names)
+     */
+    public String backendInfo() {
+    	String result = "";
+    	
+    	// count and display # of courses and sections
+    	int number_of_sections = 0,
+        	number_of_courses  = courses.size();
+        for (Course c : courses)
+       		number_of_sections += c.getNumSections();
+       	result += "Total Number of difference sections in this search: " + number_of_sections + "\n" +
+       			  "Total Number of Course in this search: " + number_of_courses + "\n";
+       	
+    	// find and display a list of instrutors who have teaching assignment but not at Tu 3:10PM
+    	List<String> filteredInstructors = new Vector<String>();
+    	List<String> notFilteredInstructors = new Vector<String>();
+    	for (Course c : courses) {
+    		for (int i = 0; i < c.getNumSections(); ++i) {
+    			Section s = c.getSection(i);
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot slot = s.getSlot(j);
+    				if (slot.isOn(1) && slot.include(15, 10))
+    					for (String name : slot.getInstName())
+    						if (!notFilteredInstructors.contains(name))
+    							notFilteredInstructors.add(name);
+    			}
+    		}
+    	}
+    	for (Course c : courses) {
+    		for (int i = 0; i < c.getNumSections(); ++i) {
+    			Section s = c.getSection(i);
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot slot = s.getSlot(j);
+					for (String name : slot.getInstName())
+						if (!notFilteredInstructors.contains(name) && !filteredInstructors.contains(name))
+							filteredInstructors.add(name);
+    			}
+    		}
+    	}
+    	filteredInstructors.sort(null);
+    	result += "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: ";
+    	for (String name : filteredInstructors) {
+    		result += (name + ", ");
+    	}
+    	result += "\n";
+       	
+       	return result;
+    }
+    @FXML
+    /**
+     *  the function triggered by 'search' button, this function will call scrapers and display
+     *  courses in the textArea
+     */
+    public void search() {
     	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText(), enrolledSections);
     	
     	// Handle 404
@@ -181,45 +234,17 @@ public class Controller {
     		return;
     	}
     	
-    	// count and display # of courses and sections
-    	int number_of_sections = 0,
-    		number_of_courses  = courses.size();
-    	for (Course c : courses)
-    		number_of_sections += c.getNumSections();
-    	textAreaConsole.setText("Total Number of difference sections in this search: " + number_of_sections +
-    			                "\nTotal Number of Course in this search: " + number_of_courses + "\n");
-    	
-    	// find and display a list of instrutors who have teaching assignment but not at Tu 3:10PM
-    	List<String> instructors = new Vector<String>();
-    	for (Course c : courses) {
-    		for (int i = 0; i < c.getNumSections(); ++i) {
-    			Section s = c.getSection(i);
-    			for (int j = 0; j < s.getNumSlots(); ++j) {
-    				Slot slot = s.getSlot(j);
-    				if (!slot.isOn(1) || !slot.include(15, 10))
-    					for (String name : slot.getInstName())
-    						if (!instructors.contains(name))
-    							instructors.add(name);
-    			}
-    		}
-    	}
-    	instructors.sort(null);
-    	String names = "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: ";
-    	for (String name : instructors) {
-    		names += (name + ", ");
-    	}
-    	names += "\n";
-    	textAreaConsole.setText(textAreaConsole.getText() + names);
+    	textAreaConsole.setText(this.backendInfo());
     	
     	// display details of each course
     	for (Course c : courses) {
     		String newline = c.getTitle() + "\n";
-    		int counter = 0;
     		for (int i = 0; i < c.getNumSections(); i++) {
     			Section s = c.getSection(i);
+    			newline += "Section: " + s.getSectionTitle() + "\n";
     			for (int j = 0; j < s.getNumSlots(); ++j) {
     				Slot t = s.getSlot(j);
-    				newline += "Slot" + " " + (counter++) + ": " + s.getSectionTitle() + "\t" + t + "\n";
+    				newline += "\tSlot" + " " + j + ": " + t + "\n";
     			}
     		}
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
