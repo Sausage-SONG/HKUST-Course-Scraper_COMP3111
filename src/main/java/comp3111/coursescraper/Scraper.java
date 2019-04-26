@@ -89,29 +89,49 @@ public class Scraper {
 		client.getOptions().setCssEnabled(false);
 		client.getOptions().setJavaScriptEnabled(false);
 	}
-
-	private boolean addSlot(HtmlElement e, Section s, boolean secondRow) {
+	
+	/**
+	 * a helper function to add slots to a section
+	 * @param e an html element representing a section 
+	 * @param s the section object
+	 * @param secondRow whether it's processing the second row (different rows have different formats)
+	 */
+	private void addSlot(HtmlElement e, Section s, boolean secondRow) {
 		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split(" ");
-		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
-		String name = e.getChildNodes().get(secondRow ? 2 : 5).getChildNodes().get(0).asText();
 		if (times[0].equals("TBA"))
-			return false;
+			return;
+		String venue = e.getChildNodes().get(secondRow ? 1 : 4).asText();
+		List<?> names = (List<?>) e.getByXPath(".//a");
+		List<String> nameList = new Vector<String>();
+		for (HtmlElement item : (List<HtmlElement>)names)
+			nameList.add(item.asText());
+		if (nameList.isEmpty()) nameList.add("TBA");
+		
 		for (int j = 0; j < times[0].length(); j+=2) {
 			String code = times[0].substring(j , j + 2);
 			if (Slot.DAYS_MAP.get(code) == null)
 				break;
 			Slot slot = new Slot();
-			slot.setInstName(name);
 			slot.setDay(Slot.DAYS_MAP.get(code));
 			slot.setStart(times[1]);
 			slot.setEnd(times[3]);
 			slot.setVenue(venue);
+			slot.setInstName(nameList);
 			s.addSlot(slot);
 		}
-		return true;
 	}
-
-	public List<Course> scrape(String baseurl, String term, String sub) {
+	
+	/**
+	 * scrape the course website using the given information<br/>
+	 * 'enrolledSections' is passed so that this function will ignore those sections (to avoid having two copies of one single course)
+	 * 
+	 * @param baseurl the base url of course website
+	 * @param term a four digit string (e.g. "1830")
+	 * @param sub the subject to search (e.g. "COMP")
+	 * @param enrolledSections a list of sections that have been enrolled
+	 * @return a list of courses (scraping result)
+	 */
+	public List<Course> scrape(String baseurl, String term, String sub, List<Section> enrolledSections) {
 
 		try {
 			HtmlPage page = client.getPage(baseurl + "/" + term + "/subject/" + sub);
@@ -125,9 +145,15 @@ public class Scraper {
 				Course c = new Course();
 				HtmlElement htmlItem = (HtmlElement) items.get(i);
 				
-				// set course title
+				// set course title, if already exist in enrolled section list, skip this one
 				HtmlElement title = (HtmlElement) htmlItem.getFirstByXPath(".//h2");
 				c.setTitle(title.asText());
+				for (Section section : enrolledSections) {
+					if (c.getSimplifiedTitle().equals(section.getCourseCode())) {
+						result.add(section.getParent());
+						continue;
+					}
+				}
 				
 				// set course exclusions and common core infomation
 				List<?> popupdetailslist = (List<?>) htmlItem.getByXPath(".//div[@class='popupdetail']/table/tbody/tr");
@@ -149,16 +175,18 @@ public class Scraper {
 				for ( HtmlElement e: (List<HtmlElement>)sections) {
 					Section section = new Section();
 					section.setSectionTitle(e.getChildNodes().get(1).asText());
-					if(addSlot(e, section, false) == true) {
-						e = (HtmlElement)e.getNextSibling();
-						if (e != null && !e.getAttribute("class").contains("newsect"))
-							addSlot(e, section, true);
-						c.addSection(section);
-					}
+					if (!section.isValid())
+						continue;
+					addSlot(e, section, false);
+					e = (HtmlElement)e.getNextSibling();
+					if (e != null && !e.getAttribute("class").contains("newsect"))
+						addSlot(e, section, true);
+					c.addSection(section);
 				}
 				
-				// a course is now complete, add to result list
-				result.add(c);
+				// a course is now complete, add to result list if it's valid
+				if (c.isValid())
+					result.add(c);
 			}
 			client.close();
 			return result;

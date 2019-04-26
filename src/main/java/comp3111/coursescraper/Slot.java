@@ -5,13 +5,26 @@ import java.util.HashMap;
 import java.time.LocalTime;
 import java.util.Locale;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Vector;
 
+/**
+ *  a slot has a Section type reference that refers to the section it belongs to. ( Course > Section > Slot)<br/>
+ *  <br/>
+ *  Attributes:<br/>
+ *  int day: from 0 to 5 (Mon. to Sat.)<br/>
+ *  LocalTime start: the start time<br/>
+ *  LocalTime end: the end time<br/>
+ *  String venue: the venue (e.g. "Rm3111")<br/>
+ *  List<String> instName: a list of instructors' names<br/>
+ *  Section parent: refer to the parent section<br/>
+ */
 public class Slot {
 	private int day;
 	private LocalTime start;
 	private LocalTime end;
 	private String venue;
-	private String instName;
+	private List<String> instName;
 	private Section parent;
 	public static final String DAYS[] = {"Mo", "Tu", "We", "Th", "Fr", "Sa"};
 	public static final Map<String, Integer> DAYS_MAP = new HashMap<String, Integer>();
@@ -20,16 +33,17 @@ public class Slot {
 			DAYS_MAP.put(DAYS[i], i);
 	}
 
-	@Override
+	public Slot() { instName = new Vector<String>(); }
+	/*@Override
 	public Slot clone() {
 		Slot s = new Slot();
 		s.day = this.day;
 		s.start = this.start;
 		s.end = this.end;
 		s.venue = this.venue;
-		s.instName = this.instName;
+		s.instName = new Vector<String>(instName);
 		return s;
-	}
+	}*/
 	public String toString() {
 		return DAYS[day] + " " + start.toString() + "-" + end.toString() + ": " + venue;
 	}
@@ -41,11 +55,15 @@ public class Slot {
 	/**
 	 * @return the instructor's name
 	 */
-	public String getInstName() { return instName; }
+	public List<String> getInstName() { return instName; }
 	/**
-	 * @param name the instructor's name to set
+	 * @param name the instructor's name to add
 	 */
-	public void setInstName(String name) { instName = name; }
+	public void addInstName(String name) { instName.add(name); }
+	/**
+	 * @param names a list of strings (names)
+	 */
+	public void setInstName(List<String> names) { instName = names; }
 	
 	
 	/*
