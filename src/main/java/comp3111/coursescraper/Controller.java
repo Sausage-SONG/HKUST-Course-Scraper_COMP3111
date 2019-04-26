@@ -225,7 +225,7 @@ public class Controller {
      *  the function triggered by 'search' button, this function will call scrapers and display
      *  courses in the textArea
      */
-    public void search() {
+    void search() {
     	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText(), enrolledSections);
     	
     	// Handle 404
@@ -244,7 +244,7 @@ public class Controller {
     			newline += "Section: " + s.getSectionTitle() + "\n";
     			for (int j = 0; j < s.getNumSlots(); ++j) {
     				Slot t = s.getSlot(j);
-    				newline += "\tSlot" + " " + j + ": " + t + "\n";
+    				newline += "Slot" + " " + j + ": " + t + "\n";
     			}
     		}
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
@@ -272,7 +272,7 @@ public class Controller {
     		RGB[i] = (RGB[i] + increase[i]) % 256;
     }
     /**
-     *  update timetable, should be called whenever enrolled section list is changed.
+     *  update timetable
      */
     public void updateTimetable() {
     	// first remove all existing labels
