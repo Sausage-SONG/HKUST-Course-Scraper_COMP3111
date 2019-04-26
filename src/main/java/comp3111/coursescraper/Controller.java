@@ -1,9 +1,5 @@
 package comp3111.coursescraper;
 
-
-
-
-
 //import java.awt.event.ActionEvent;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.beans.property.ObjectProperty;
@@ -166,18 +162,82 @@ public class Controller {
     
     
     
-    
+    /**
+     *  a list to store courses (the result of search or allSubjectSearch)
+     */
     private static List<Course> courses = new Vector<Course>();
+    /**
+     *  a list to store courses (the result of using filters)
+     */
     private static List<Course> filteredCourses = new Vector<Course>();
+    /**
+     *  a list to store sections (this is just the expansion of 'filteredCourses', for convenience)
+     */
     private static List<Section> filteredSections = new Vector<Section>();
-    public static List<Section> enrolledSections = new Vector<Section>();
+    /**
+     *  a list to store sections that have been enrolled
+     */
+    private static List<Section> enrolledSections = new Vector<Section>();
 
-    @FXML
     /*
      *  Task 1: Search function for button "Search".
      */
+    /**
+     * @return a string of information required by task 1 (# of courses, # of sections, instructors' names)
+     */
+    public String backendInfo() {
+    	String result = "";
+    	
+    	// count and display # of courses and sections
+    	int number_of_sections = 0,
+        	number_of_courses  = courses.size();
+        for (Course c : courses)
+       		number_of_sections += c.getNumSections();
+       	result += "Total Number of difference sections in this search: " + number_of_sections + "\n" +
+       			  "Total Number of Course in this search: " + number_of_courses + "\n";
+       	
+    	// find and display a list of instrutors who have teaching assignment but not at Tu 3:10PM
+    	List<String> filteredInstructors = new Vector<String>();
+    	List<String> notFilteredInstructors = new Vector<String>();
+    	for (Course c : courses) {
+    		for (int i = 0; i < c.getNumSections(); ++i) {
+    			Section s = c.getSection(i);
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot slot = s.getSlot(j);
+    				if (slot.isOn(1) && slot.include(15, 10))
+    					for (String name : slot.getInstName())
+    						if (!notFilteredInstructors.contains(name))
+    							notFilteredInstructors.add(name);
+    			}
+    		}
+    	}
+    	for (Course c : courses) {
+    		for (int i = 0; i < c.getNumSections(); ++i) {
+    			Section s = c.getSection(i);
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot slot = s.getSlot(j);
+					for (String name : slot.getInstName())
+						if (!notFilteredInstructors.contains(name) && !filteredInstructors.contains(name))
+							filteredInstructors.add(name);
+    			}
+    		}
+    	}
+    	filteredInstructors.sort(null);
+    	result += "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: ";
+    	for (String name : filteredInstructors) {
+    		result += (name + ", ");
+    	}
+    	result += "\n";
+       	
+       	return result;
+    }
+    @FXML
+    /**
+     *  the function triggered by 'search' button, this function will call scrapers and display
+     *  courses in the textArea
+     */
     void search() {
-    	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText());
+    	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText(), enrolledSections);
     	
     	// Handle 404
     	if (courses == null) {
@@ -185,45 +245,18 @@ public class Controller {
     		return;
     	}
     	
-    	// count and display # of courses and sections
-    	int number_of_sections = 0,
-    		number_of_courses  = 0;
-    	for (Course c : courses) {
-    		number_of_sections += c.getNumSections();
-    		number_of_courses  += (c.hasValidSection()) ? 1 : 0;
-    	}
-    	textAreaConsole.setText("Total Number of difference sections in this search: " + number_of_courses +
-    			                "\nTotal Number of Course in this search: " + number_of_sections + "\n");
-    	
-    	// find and display a list of instrutors who have teaching assignment but not at Tu 3:10PM
-    	List<String> instructors = new Vector<String>();
-    	for (Course c : courses) {
-    		for (int i = 0; i < c.getNumSections(); ++i) {
-    			Section s = c.getSection(i);
-    			for (int j = 0; j < s.getNumSlots(); ++j) {
-    				Slot slot = s.getSlot(j);
-    				if ((!slot.isOn(1) || !slot.include(15, 10)) && !instructors.contains(slot.getInstName()))
-    					instructors.add(slot.getInstName());
-    			}
-    		}
-    	}
-    	instructors.sort(null);
-    	String names = "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: ";
-    	for (String name : instructors) {
-    		names += (name + ", ");
-    	}
-    	names += "\n";
-    	textAreaConsole.setText(textAreaConsole.getText() + names);
+    	// display task 1 information
+    	textAreaConsole.setText(this.backendInfo());
     	
     	// display details of each course
     	for (Course c : courses) {
     		String newline = c.getTitle() + "\n";
-    		int counter = 0;
     		for (int i = 0; i < c.getNumSections(); i++) {
     			Section s = c.getSection(i);
+    			newline += "Section: " + s.getSectionTitle() + "\n";
     			for (int j = 0; j < s.getNumSlots(); ++j) {
     				Slot t = s.getSlot(j);
-    				newline += "Slot" + " " + (counter++) + ": " + s.getSectionTitle() + "\t" + t + "\n";
+    				newline += "Slot" + " " + j + ": " + t + "\n";
     			}
     		}
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
@@ -235,9 +268,15 @@ public class Controller {
     /*
      *  Task 4: Update the timetable whenever the enrolled sections list is updated.
      */
+    /**
+     *  a list to store all the label objects in task 4
+     */
     private static List<Label> labels = new Vector<Label>();
+    /**
+     *  an array (size == 3) that stores a specific color in RGB format
+     */
     private static int[] RGB = new int[3];
-    // set random initial values for RGB
+    // initialize RGB to be a random color
     static {
     	Random r = new Random();
     	for (int i = 0; i < 3; ++i) RGB[i] = r.nextInt(256);
@@ -251,7 +290,7 @@ public class Controller {
     		RGB[i] = (RGB[i] + increase[i]) % 256;
     }
     /**
-     *  update timetable, should be called whenever enrolled section list is changed.
+     *  update timetable according to 'enrolledSections', create all labels again
      */
     public void updateTimetable() {
     	// first remove all existing labels
@@ -261,7 +300,6 @@ public class Controller {
     	
     	// then create new labels for each section
     	for (int i = 0; i < enrolledSections.size(); ++i) {
-    		System.out.println(enrolledSections.get(i).getCourseCode());
     		Section s = enrolledSections.get(i);
     		
     		// prepare the label name and the color, as these are shared by slots from the same section
@@ -293,8 +331,14 @@ public class Controller {
     }
     
     
-    //Task2
+
     @FXML
+    /**
+     * Deal with the function of button SelectAll and DeselectAll
+     * if 'Select All' is clicked, check all the checkboxes and set the text to be 'DeselectAll'
+     * if 'Deselect All' is clicked, uncheck all the checkboxes and set the text to be 'SelectAll'
+     * every time the checkbox change, the filter will be refreshed
+	 */
     public void SelectDeselectAll() {
     	final CheckBox[] ListAll = {CheckboxAM, CheckboxPM,CheckboxMon,CheckboxTue,CheckboxWed,CheckboxThu,CheckboxFri,
     			CheckboxSat,CheckboxCC,CheckboxNoEx,CheckboxWithLabs};
@@ -314,8 +358,9 @@ public class Controller {
     	refreshCheckBox();
     }
     
-    
-   
+   /**
+    * 
+    */
     public void refreshCheckBox() {
     	Vector<boolean[]> flags=new Vector<boolean[]>();
     	// For every section in the courses list, create a boolean array
@@ -338,9 +383,7 @@ public class Controller {
     		}
     		flags.add(innerflags);
     	}
-    	
-    	
-    	
+    		
     	//check whether the section satisfy the CheckBox, store boolean value in item[11]
     	final CheckBox[] ListAll = {CheckboxAM, CheckboxPM,CheckboxMon,CheckboxTue,CheckboxWed,CheckboxThu,CheckboxFri,
     			CheckboxSat,CheckboxCC,CheckboxNoEx,CheckboxWithLabs};
@@ -387,12 +430,10 @@ public class Controller {
     	for (Section item:filteredSections) {
     		
     		CourseCodeColumn.setCellValueFactory(new PropertyValueFactory<>("CourseCode"));
-    		SectionColumn.setCellValueFactory(new PropertyValueFactory<>("sectionName"));
+    		SectionColumn.setCellValueFactory(new PropertyValueFactory<>("SimplifiedTitle"));
         	CourseNameColumn.setCellValueFactory(new PropertyValueFactory<>("CourseName"));
         	InstructorColumn.setCellValueFactory(new PropertyValueFactory<>("instructorList"));
-        	
-        	
-        	
+        		
         	EnrollColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Section, CheckBox>, ObservableValue<CheckBox>>() {
 
                 @Override
@@ -402,8 +443,6 @@ public class Controller {
                     CheckBox checkBox = new CheckBox();
 
                     checkBox.selectedProperty().setValue(se.getEnrolled());
-
-
 
                     checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
                         public void changed(ObservableValue<? extends Boolean> ov,
@@ -420,17 +459,11 @@ public class Controller {
                         		
                         		textAreaConsole.setText(textAreaConsole.getText()+'\n'+ newline);
                         	}
-
                         }
                     });
-
                     return new SimpleObjectProperty<CheckBox>(checkBox);
-
                 }
-
             });
-
-        	
         	SectionTable.getItems().add(item);
     	}
     }
