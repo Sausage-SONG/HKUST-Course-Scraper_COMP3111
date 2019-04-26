@@ -8,6 +8,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Vector;
 
+/**
+ *  a slot has a Section type reference that refers to the section it belongs to. ( Course > Section > Slot)<br/>
+ *  <br/>
+ *  Attributes:<br/>
+ *  int day: from 0 to 5 (Mon. to Sat.)<br/>
+ *  LocalTime start: the start time<br/>
+ *  LocalTime end: the end time<br/>
+ *  String venue: the venue (e.g. "Rm3111")<br/>
+ *  List<String> instName: a list of instructors' names<br/>
+ *  Section parent: refer to the parent section<br/>
+ */
 public class Slot {
 	private int day;
 	private LocalTime start;
@@ -23,7 +34,7 @@ public class Slot {
 	}
 
 	public Slot() { instName = new Vector<String>(); }
-	@Override
+	/*@Override
 	public Slot clone() {
 		Slot s = new Slot();
 		s.day = this.day;
@@ -32,7 +43,7 @@ public class Slot {
 		s.venue = this.venue;
 		s.instName = new Vector<String>(instName);
 		return s;
-	}
+	}*/
 	public String toString() {
 		return DAYS[day] + " " + start.toString() + "-" + end.toString() + ": " + venue;
 	}

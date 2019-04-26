@@ -1,11 +1,19 @@
 package comp3111.coursescraper;
 
-
+/**
+ *  a course has an array of sections. ( Course > Section > Slot)<br/>
+ *  <br/>
+ *  Attributes:<br/>
+ *  String title: full course title (e.g. "COMP 1022P - Introduction to Computing with Java (3 units)")<br/>
+ *  String exclusion: course codes (e.g. "COMP 1021, COMP 1022Q,  COMP 2011, ISOM 3320")<br/>
+ *  String commonCore: CC info (e.g. "Common Core (QR) for 4Y programs")<br/>
+ *  Section[] sections: an array of sections<br/>
+ *  int numSections: number of sections in the array<br/>
+ */
 public class Course {
 	private static final int DEFAULT_MAX_SECTION = 80;
 	
 	private String title; 
-	private String description;
 	private String exclusion;
 	private String commonCore;
 	private Section [] sections;
@@ -16,6 +24,8 @@ public class Course {
 		for (int i = 0; i < DEFAULT_MAX_SECTION; i++) sections[i] = null;
 		numSections = 0;
 		commonCore = "";
+		exclusion = "";
+		title = "";
 	}
 	
 	
