@@ -159,7 +159,6 @@ public class Section {
 		return false;
 	}
 	
-	// NXY Special String
 	public String getCourseCode() {
 		return this.getParent().getSimplifiedTitle();
 	}
