@@ -89,7 +89,13 @@ public class Scraper {
 		client.getOptions().setCssEnabled(false);
 		client.getOptions().setJavaScriptEnabled(false);
 	}
-
+	
+	/**
+	 * a helper function to add slots to a section
+	 * @param e an html element representing a section 
+	 * @param s the section object
+	 * @param secondRow whether it's processing the second row (different rows have different formats)
+	 */
 	private void addSlot(HtmlElement e, Section s, boolean secondRow) {
 		String times[] =  e.getChildNodes().get(secondRow ? 0 : 3).asText().split(" ");
 		if (times[0].equals("TBA"))
@@ -114,7 +120,17 @@ public class Scraper {
 			s.addSlot(slot);
 		}
 	}
-
+	
+	/**
+	 * scrape the course website using the given information<br/>
+	 * 'enrolledSections' is passed so that this function will ignore those sections (to avoid having two copies of one single course)
+	 * 
+	 * @param baseurl the base url of course website
+	 * @param term a four digit string (e.g. "1830")
+	 * @param sub the subject to search (e.g. "COMP")
+	 * @param enrolledSections a list of sections that have been enrolled
+	 * @return a list of courses (scraping result)
+	 */
 	public List<Course> scrape(String baseurl, String term, String sub, List<Section> enrolledSections) {
 
 		try {

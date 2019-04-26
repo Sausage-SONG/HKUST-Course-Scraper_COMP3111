@@ -162,17 +162,28 @@ public class Controller {
     
     
     
-    
+    /**
+     *  a list to store courses (the result of search or allSubjectSearch)
+     */
     private static List<Course> courses = new Vector<Course>();
+    /**
+     *  a list to store courses (the result of using filters)
+     */
     private static List<Course> filteredCourses = new Vector<Course>();
+    /**
+     *  a list to store sections (this is just the expansion of 'filteredCourses', for convenience)
+     */
     private static List<Section> filteredSections = new Vector<Section>();
+    /**
+     *  a list to store sections that have been enrolled
+     */
     private static List<Section> enrolledSections = new Vector<Section>();
 
     /*
      *  Task 1: Search function for button "Search".
      */
     /**
-     * @return return a string of information required by task 1 (# of courses, # of sections, instructors' names)
+     * @return a string of information required by task 1 (# of courses, # of sections, instructors' names)
      */
     public String backendInfo() {
     	String result = "";
@@ -234,6 +245,7 @@ public class Controller {
     		return;
     	}
     	
+    	// display task 1 information
     	textAreaConsole.setText(this.backendInfo());
     	
     	// display details of each course
@@ -256,9 +268,15 @@ public class Controller {
     /*
      *  Task 4: Update the timetable whenever the enrolled sections list is updated.
      */
+    /**
+     *  a list to store all the label objects in task 4
+     */
     private static List<Label> labels = new Vector<Label>();
+    /**
+     *  an array (size == 3) that stores a specific color in RGB format
+     */
     private static int[] RGB = new int[3];
-    // set random initial values for RGB
+    // initialize RGB to be a random color
     static {
     	Random r = new Random();
     	for (int i = 0; i < 3; ++i) RGB[i] = r.nextInt(256);
@@ -272,7 +290,7 @@ public class Controller {
     		RGB[i] = (RGB[i] + increase[i]) % 256;
     }
     /**
-     *  update timetable
+     *  update timetable according to 'enrolledSections', create all labels again
      */
     public void updateTimetable() {
     	// first remove all existing labels
@@ -313,7 +331,9 @@ public class Controller {
     }
     
     
-    //Task2
+    /*
+     *  Task 2
+     */
     @FXML
     public void SelectDeselectAll() {
     	final CheckBox[] ListAll = {CheckboxAM, CheckboxPM,CheckboxMon,CheckboxTue,CheckboxWed,CheckboxThu,CheckboxFri,
