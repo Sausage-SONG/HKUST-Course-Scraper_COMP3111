@@ -129,6 +129,7 @@ public class Scraper {
 	 * @param term a four digit string (e.g. "1830")
 	 * @param sub the subject to search (e.g. "COMP")
 	 * @param enrolledSections a list of sections that have been enrolled
+	 * @param courseMustBeValid whether only scrape valid courses
 	 * @return a list of courses (scraping result)
 	 */
 	public List<Course> scrape(String baseurl, String term, String sub, List<Section> enrolledSections, boolean courseMustBeValid) {
