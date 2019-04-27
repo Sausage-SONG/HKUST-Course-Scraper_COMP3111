@@ -441,10 +441,14 @@ public class Controller {
     }
     
     
-    /*
-     *  Task 2
-     */
+
     @FXML
+    /**
+     * Deal with the function of button SelectAll and DeselectAll
+     * if 'Select All' is clicked, check all the checkboxes and set the text to be 'DeselectAll'
+     * if 'Deselect All' is clicked, uncheck all the checkboxes and set the text to be 'SelectAll'
+     * every time the checkbox change, the filter will be refreshed
+	 */
     public void SelectDeselectAll() {
     	final CheckBox[] ListAll = {CheckboxAM, CheckboxPM,CheckboxMon,CheckboxTue,CheckboxWed,CheckboxThu,CheckboxFri,
     			CheckboxSat,CheckboxCC,CheckboxNoEx,CheckboxWithLabs};
@@ -463,7 +467,10 @@ public class Controller {
     		}
     	refreshCheckBox();
     }
-   
+    
+   /**
+    * 
+    */
     public void refreshCheckBox() {
     	Vector<boolean[]> flags=new Vector<boolean[]>();
     	// For every section in the courses list, create a boolean array

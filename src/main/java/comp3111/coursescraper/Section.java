@@ -170,13 +170,14 @@ public class Section {
 		return false;
 	}
 	
-	
+
 	/*
 	 *  Task 3 Special String 
 	 */
 	/**
 	 * @return the course code(simplified title) of a section (e.g. "COMP3111")
 	 */
+
 	public String getCourseCode() {
 		return this.getParent().getSimplifiedTitle();
 	}
