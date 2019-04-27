@@ -192,7 +192,8 @@ public class Controller {
 	    	thread.start();
 	    	task.setOnSucceeded((WorkerStateEvent t) ->
 	        {
-		    	textAreaConsole.appendText("Total Number of Courses fetched: "+courses.size()+"\n");
+		    	textAreaConsole.appendText("Total Number of Courses fetched(invalid courses included): "+courses.size() + "\n");
+		    	textAreaConsole.appendText("\n" + this.backendInfo() + "\n");
 	        });
 	    }
     	for (Course c : courses)
@@ -301,11 +302,13 @@ public class Controller {
     	
     	// count and display # of courses and sections
     	int number_of_sections = 0,
-        	number_of_courses  = courses.size();
-        for (Course c : courses)
+        	number_of_courses  = 0;
+        for (Course c : courses) {
        		number_of_sections += c.getNumSections();
-       	result += "Total Number of difference sections in this search: " + number_of_sections + "\n" +
-       			  "Total Number of Course in this search: " + number_of_courses + "\n";
+       		number_of_courses += (c.isValid()) ? 1 : 0;
+        }
+       	result += "Total Number of different sections in this search: " + number_of_sections + "\n" +
+       			  "Total Number of courses in this search(only valid ones): " + number_of_courses + "\n";
        	
     	// find and display a list of instrutors who have teaching assignment but not at Tu 3:10PM
     	List<String> filteredInstructors = new Vector<String>();
@@ -351,7 +354,7 @@ public class Controller {
     	// About Task 5
     	buttonSfqEnrollCourse.setDisable(false);
     	List<String> allSubject = scraper.scrapeSubject(textfieldURL.getText(), textfieldTerm.getText());
-    	textAreaConsole.setText("Total Number of Categories/Code Prefix: "+allSubject.size()+"\n");  
+    	textAreaConsole.setText("Total Number of Categories/Code Prefix: "+allSubject.size()+"\n\n");  
     
     	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText(), enrolledSections, true);
     	
