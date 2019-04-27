@@ -83,6 +83,7 @@ public class ItemTest {
 		Section s = new Section();
 		s.setParent(c);
 		assertEquals(s.getParent(),c);
+	}
 
 	
 	@Test

@@ -131,7 +131,7 @@ public class Scraper {
 	 * @param enrolledSections a list of sections that have been enrolled
 	 * @return a list of courses (scraping result)
 	 */
-	public List<Course> scrape(String baseurl, String term, String sub, List<Section> enrolledSections) {
+	public List<Course> scrape(String baseurl, String term, String sub, List<Section> enrolledSections, boolean courseMustBeValid) {
 
 		try {
 			HtmlPage page = client.getPage(baseurl + "/" + term + "/subject/" + sub);
@@ -185,7 +185,7 @@ public class Scraper {
 				}
 				
 				// a course is now complete, add to result list if it's valid
-				if (c.isValid())
+				if (!(courseMustBeValid && !c.isValid()))
 					result.add(c);
 			}
 			client.close();
