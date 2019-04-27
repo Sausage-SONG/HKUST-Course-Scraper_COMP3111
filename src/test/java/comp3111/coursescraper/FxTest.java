@@ -39,8 +39,8 @@ public class FxTest extends ApplicationTest {
 	@Test
 	public void testSFQButton() {
 		clickOn("#tabSfq");
-		clickOn("#buttonInstructorSfq");
-		Button b = (Button)s.lookup("#buttonInstructorSfq");
+		clickOn("#buttonSfqEnrollCourse");
+		Button b = (Button)s.lookup("#buttonSfqEnrollCourse");
 		sleep(1000);
 		assertTrue(b.isDisabled());
 	}
@@ -54,5 +54,12 @@ public class FxTest extends ApplicationTest {
 	@Test
 	public void testTimetable() {
 		clickOn("#tabTimetable");
+	}
+	
+	@Test
+	public void testAllSubjectSearch() {
+		clickOn("#tabAllSubject");
+		clickOn("#AllSubjectSearch");
+		clickOn("#AllSubjectSearch");
 	}
 }
