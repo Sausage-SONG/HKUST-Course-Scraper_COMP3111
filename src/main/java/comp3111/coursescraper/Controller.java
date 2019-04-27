@@ -178,7 +178,7 @@ public class Controller {
 	    		@Override
 	    		protected Void call() {   			
 	    	    	for (int i = 0; i<allSubject.size(); i++) {
-	    	    		List<Course> OneSubjectCourse = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), allSubject.get(i), enrolledSections);	
+	    	    		List<Course> OneSubjectCourse = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), allSubject.get(i), enrolledSections, false);	
 						courses.addAll(OneSubjectCourse);    	    	    	    		
 	    	    		System.out.println(allSubject.get(i)+" is done;"); 
 	    	    		updateProgress(i+1,allSubject.size());  //i ----> i + 1   
@@ -195,6 +195,9 @@ public class Controller {
 		    	textAreaConsole.appendText("Total Number of Courses fetched: "+courses.size()+"\n");
 	        });
 	    }
+    	for (Course c : courses)
+    		if (!c.isValid())
+    			courses.remove(c);
     }
     
     
@@ -345,18 +348,21 @@ public class Controller {
      *  courses in the textArea
      */
     void search() {
+    	// About Task 5
     	buttonSfqEnrollCourse.setDisable(false);
-    	
-    	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText(), enrolledSections);
+    	List<String> allSubject = scraper.scrapeSubject(textfieldURL.getText(), textfieldTerm.getText());
+    	textAreaConsole.setText("Total Number of Categories/Code Prefix: "+allSubject.size()+"\n");  
+    
+    	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText(), enrolledSections, true);
     	
     	// Handle 404
     	if (courses == null) {
-    		textAreaConsole.setText("Oops! 404 Not Found! Please check your input.\n");
+    		textAreaConsole.appendText("Oops! 404 Not Found! Please check your input.\n");
     		return;
     	}
     	
     	// display task 1 information
-    	textAreaConsole.setText(this.backendInfo());
+    	textAreaConsole.appendText(this.backendInfo());
     	
     	// display details of each course
     	for (Course c : courses) {
