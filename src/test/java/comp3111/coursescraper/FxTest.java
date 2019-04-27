@@ -36,8 +36,18 @@ public class FxTest extends ApplicationTest {
 	}
 
 	
+	/*
+	 * Task 5, 6 
+	 */
 	@Test
-	public void testSFQButton() {
+	public void testAllSubjectSearch() {
+		clickOn("#tabAllSubject");
+		clickOn("#AllSubjectSearch");
+		clickOn("#AllSubjectSearch");
+	}
+	
+	@Test
+	public void testDisabledSFQButton() {
 		clickOn("#tabSfq");
 		clickOn("#buttonSfqEnrollCourse");
 		Button b = (Button)s.lookup("#buttonSfqEnrollCourse");
@@ -45,6 +55,27 @@ public class FxTest extends ApplicationTest {
 		assertTrue(b.isDisabled());
 	}
 	
+	@Test
+	public void testSFQButton() {
+		clickOn("#tabMain");
+		clickOn("#buttonSearch");
+		clickOn("#tabSfq");
+		clickOn("#buttonSfqEnrollCourse");
+		Button b = (Button)s.lookup("#buttonSfqEnrollCourse");
+		sleep(1000);
+		assertEquals(b.isDisabled(),false);
+	}
+	
+	@Test
+	public void testInstructorSFQ() {
+		clickOn("#tabSfq");
+		clickOn("#buttonInstructorSfq");
+	}
+
+	
+	/*
+	 *  Task 1, 4
+	 */
 	@Test
 	public void testSearch() {
 		clickOn("#tabMain");
@@ -56,10 +87,24 @@ public class FxTest extends ApplicationTest {
 		clickOn("#tabTimetable");
 	}
 	
+	
+	/*
+	 *  Task 2, 3
+	 */
 	@Test
-	public void testAllSubjectSearch() {
-		clickOn("#tabAllSubject");
-		clickOn("#AllSubjectSearch");
-		clickOn("#AllSubjectSearch");
+	public void testFilters() {
+		clickOn("#tabMain");
+		clickOn("#buttonSearch");
+		clickOn("#tabFilter");
+		clickOn("#BtnSelectAll");
+		clickOn("#BtnSelectAll");
+	}
+	
+	@Test
+	public void testList() {
+		clickOn("#tabMain");
+		clickOn("#buttonSearch");
+		clickOn("#tabFilter");
+		clickOn("#tabList");
 	}
 }
