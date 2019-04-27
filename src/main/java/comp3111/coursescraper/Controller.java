@@ -560,6 +560,7 @@ public class Controller {
                     Section se = arg0.getValue();
                   
                     CheckBox checkBox = new CheckBox();
+                    checkBox.setId("sectionCheckBox");
 
                     checkBox.selectedProperty().setValue(se.getEnrolled());
 
