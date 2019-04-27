@@ -21,6 +21,7 @@ public class ItemTest {
 	}
 	
 	@Test
+
 	public void testCourseGetSimplifiedTitle() {
 		Course c = new Course();
 		c.setTitle("COMP 1021 - Introduction to Computer Science (3 units)");
@@ -82,7 +83,7 @@ public class ItemTest {
 		Section s = new Section();
 		s.setParent(c);
 		assertEquals(s.getParent(),c);
-	}
+
 	
 	@Test
 	public void testIsDigit() {
