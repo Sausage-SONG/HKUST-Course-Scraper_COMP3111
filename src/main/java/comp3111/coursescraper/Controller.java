@@ -269,14 +269,80 @@ public class Controller {
     	}
     }
     
+    
+    /**
+     *  a list to store courses (the result of search or allSubjectSearch)
+     */
     private static List<Course> courses = new Vector<Course>();
+    /**
+     *  a list to store courses (the result of using filters)
+     */
     private static List<Course> filteredCourses = new Vector<Course>();
+    /**
+     *  a list to store sections (this is just the expansion of 'filteredCourses', for convenience)
+     */
     private static List<Section> filteredSections = new Vector<Section>();
+    /**
+     *  a list to store sections that have been enrolled
+     */
     private static List<Section> enrolledSections = new Vector<Section>();
 
-    @FXML
     /*
      *  Task 1: Search function for button "Search".
+     */
+    /**
+     * @return a string of information required by task 1 (# of courses, # of sections, instructors' names)
+     */
+    public String backendInfo() {
+    	String result = "";
+    	
+    	// count and display # of courses and sections
+    	int number_of_sections = 0,
+        	number_of_courses  = courses.size();
+        for (Course c : courses)
+       		number_of_sections += c.getNumSections();
+       	result += "Total Number of difference sections in this search: " + number_of_sections + "\n" +
+       			  "Total Number of Course in this search: " + number_of_courses + "\n";
+       	
+    	// find and display a list of instrutors who have teaching assignment but not at Tu 3:10PM
+    	List<String> filteredInstructors = new Vector<String>();
+    	List<String> notFilteredInstructors = new Vector<String>();
+    	for (Course c : courses) {
+    		for (int i = 0; i < c.getNumSections(); ++i) {
+    			Section s = c.getSection(i);
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot slot = s.getSlot(j);
+    				if (slot.isOn(1) && slot.include(15, 10))
+    					for (String name : slot.getInstName())
+    						if (!notFilteredInstructors.contains(name))
+    							notFilteredInstructors.add(name);
+    			}
+    		}
+    	}
+    	for (Course c : courses) {
+    		for (int i = 0; i < c.getNumSections(); ++i) {
+    			Section s = c.getSection(i);
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot slot = s.getSlot(j);
+					for (String name : slot.getInstName())
+						if (!notFilteredInstructors.contains(name) && !filteredInstructors.contains(name))
+							filteredInstructors.add(name);
+    			}
+    		}
+    	}
+    	filteredInstructors.sort(null);
+    	result += "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: ";
+    	for (String name : filteredInstructors) {
+    		result += (name + ", ");
+    	}
+    	result += "\n";
+       	
+       	return result;
+    }
+    @FXML
+    /**
+     *  the function triggered by 'search' button, this function will call scrapers and display
+     *  courses in the textArea
      */
     void search() {
     	buttonSfqEnrollCourse.setDisable(false);
@@ -289,45 +355,18 @@ public class Controller {
     		return;
     	}
     	
-    	// count and display # of courses and sections
-    	int number_of_sections = 0,
-    		number_of_courses  = courses.size();
-    	for (Course c : courses)
-    		number_of_sections += c.getNumSections();
-    	textAreaConsole.setText("Total Number of difference sections in this search: " + number_of_sections +
-    			                "\nTotal Number of Course in this search: " + number_of_courses + "\n");
-    	
-    	// find and display a list of instrutors who have teaching assignment but not at Tu 3:10PM
-    	List<String> instructors = new Vector<String>();
-    	for (Course c : courses) {
-    		for (int i = 0; i < c.getNumSections(); ++i) {
-    			Section s = c.getSection(i);
-    			for (int j = 0; j < s.getNumSlots(); ++j) {
-    				Slot slot = s.getSlot(j);
-    				if (!slot.isOn(1) || !slot.include(15, 10))
-    					for (String name : slot.getInstName())
-    						if (!instructors.contains(name))
-    							instructors.add(name);
-    			}
-    		}
-    	}
-    	instructors.sort(null);
-    	String names = "Instructors who has teaching assignment this term but does not need to teach at Tu 3:10pm: ";
-    	for (String name : instructors) {
-    		names += (name + ", ");
-    	}
-    	names += "\n";
-    	textAreaConsole.setText(textAreaConsole.getText() + names);
+    	// display task 1 information
+    	textAreaConsole.setText(this.backendInfo());
     	
     	// display details of each course
     	for (Course c : courses) {
     		String newline = c.getTitle() + "\n";
-    		int counter = 0;
     		for (int i = 0; i < c.getNumSections(); i++) {
     			Section s = c.getSection(i);
+    			newline += "Section: " + s.getSectionTitle() + "\n";
     			for (int j = 0; j < s.getNumSlots(); ++j) {
     				Slot t = s.getSlot(j);
-    				newline += "Slot" + " " + (counter++) + ": " + s.getSectionTitle() + "\t" + t + "\n";
+    				newline += "Slot" + " " + j + ": " + t + "\n";
     			}
     		}
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
@@ -339,9 +378,15 @@ public class Controller {
     /*
      *  Task 4: Update the timetable whenever the enrolled sections list is updated.
      */
+    /**
+     *  a list to store all the label objects in task 4
+     */
     private static List<Label> labels = new Vector<Label>();
+    /**
+     *  an array (size == 3) that stores a specific color in RGB format
+     */
     private static int[] RGB = new int[3];
-    // set random initial values for RGB
+    // initialize RGB to be a random color
     static {
     	Random r = new Random();
     	for (int i = 0; i < 3; ++i) RGB[i] = r.nextInt(256);
@@ -355,7 +400,7 @@ public class Controller {
     		RGB[i] = (RGB[i] + increase[i]) % 256;
     }
     /**
-     *  update timetable, should be called whenever enrolled section list is changed.
+     *  update timetable according to 'enrolledSections', create all labels again
      */
     public void updateTimetable() {
     	// first remove all existing labels
@@ -396,7 +441,9 @@ public class Controller {
     }
     
     
-    //Task2
+    /*
+     *  Task 2
+     */
     @FXML
     public void SelectDeselectAll() {
     	final CheckBox[] ListAll = {CheckboxAM, CheckboxPM,CheckboxMon,CheckboxTue,CheckboxWed,CheckboxThu,CheckboxFri,
