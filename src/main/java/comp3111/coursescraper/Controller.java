@@ -295,6 +295,7 @@ public class Controller {
      *  Task 1: Search function for button "Search".
      */
     /**
+     * generate backend info for task 1
      * @return a string of information required by task 1 (# of courses, # of sections, instructors' names)
      */
     public String backendInfo() {

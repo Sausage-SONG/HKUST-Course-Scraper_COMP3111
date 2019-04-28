@@ -122,7 +122,7 @@ public class Scraper {
 	}
 	
 	/**
-	 * scrape the course website using the given information<br/>
+	 * scrape the course website using the given information<br>
 	 * 'enrolledSections' is passed so that this function will ignore those sections (to avoid having two copies of one single course)
 	 * 
 	 * @param baseurl the base url of course website
