@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- *  a slot has a Section type reference that refers to the section it belongs to. ( Course > Section > Slot)<br/>
- *  <br/>
- *  Attributes:<br/>
- *  int day: from 0 to 5 (Mon. to Sat.)<br/>
- *  LocalTime start: the start time<br/>
- *  LocalTime end: the end time<br/>
- *  String venue: the venue (e.g. "Rm3111")<br/>
- *  List<String> instName: a list of instructors' names<br/>
- *  Section parent: refer to the parent section<br/>
+ *  a slot has a Section type reference that refers to the section it belongs to. ( Course > Section > Slot)<br>
+ *  <br>
+ *  Attributes:<br>
+ *  int day: from 0 to 5 (Mon. to Sat.)<br>
+ *  LocalTime start: the start time<br>
+ *  LocalTime end: the end time<br>
+ *  String venue: the venue (e.g. "Rm3111")<br>
+ *  List<String> instName: a list of instructors' names<br>
+ *  Section parent: refer to the parent section<br>
  */
 public class Slot {
 	private int day;
@@ -32,18 +32,15 @@ public class Slot {
 		for (int i = 0; i < DAYS.length; i++)
 			DAYS_MAP.put(DAYS[i], i);
 	}
-
+	
+	/**
+	 *  Default Constructor
+	 */
 	public Slot() { instName = new Vector<String>(); }
-	/*@Override
-	public Slot clone() {
-		Slot s = new Slot();
-		s.day = this.day;
-		s.start = this.start;
-		s.end = this.end;
-		s.venue = this.venue;
-		s.instName = new Vector<String>(instName);
-		return s;
-	}*/
+	
+	/**
+	 *  convert a slot to a string
+	 */
 	public String toString() {
 		return DAYS[day] + " " + start.toString() + "-" + end.toString() + ": " + venue;
 	}

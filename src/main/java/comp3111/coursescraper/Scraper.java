@@ -129,9 +129,10 @@ public class Scraper {
 	 * @param term a four digit string (e.g. "1830")
 	 * @param sub the subject to search (e.g. "COMP")
 	 * @param enrolledSections a list of sections that have been enrolled
+	 * @param courseMustBeValid whether only scrape valid courses
 	 * @return a list of courses (scraping result)
 	 */
-	public List<Course> scrape(String baseurl, String term, String sub, List<Section> enrolledSections) {
+	public List<Course> scrape(String baseurl, String term, String sub, List<Section> enrolledSections, boolean courseMustBeValid) {
 
 		try {
 			HtmlPage page = client.getPage(baseurl + "/" + term + "/subject/" + sub);
@@ -155,7 +156,7 @@ public class Scraper {
 					}
 				}
 				
-				// set course exclusions and common core infomation
+				// set course exclusions and common core information
 				List<?> popupdetailslist = (List<?>) htmlItem.getByXPath(".//div[@class='popupdetail']/table/tbody/tr");
 				HtmlElement exclusion = null, commonCore = null;
 				for ( HtmlElement e : (List<HtmlElement>)popupdetailslist) {
@@ -185,7 +186,7 @@ public class Scraper {
 				}
 				
 				// a course is now complete, add to result list if it's valid
-				if (c.isValid())
+				if (!(courseMustBeValid && !c.isValid()))
 					result.add(c);
 			}
 			client.close();
@@ -196,4 +197,124 @@ public class Scraper {
 		return null;
 	}
 
+	public List<String> scrapeSubject(String baseurl, String term){
+		try {
+			HtmlPage page = client.getPage(baseurl +"/" + term+ "/");
+			List<?> items = (List<?>) page.getByXPath("//div[@class='depts']");
+			
+			HtmlElement htmlItem = (HtmlElement) items.get(0);
+			List<?> allSub = (List<?>) htmlItem.getByXPath(".//a");
+			
+			Vector<String> result = new Vector<String>();
+			for(int i = 0; i<allSub.size(); i++) {
+				HtmlElement oneSub = (HtmlElement) allSub.get(i);
+				result.add(oneSub.asText());
+			}
+			client.close();
+			return result;
+			
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+
+
+	public List<?> scrapeSFQ (String sfqurl){
+		try {
+			
+			HtmlPage page = client.getPage(sfqurl);
+			Vector<CourseSFQ> result = new Vector<CourseSFQ>();
+			
+			List<?>courseNames = (List<?>)page.getByXPath("//td[@colspan='3']");
+			for(int i = 0; i<courseNames.size(); i++) {
+				HtmlElement oneName = (HtmlElement)courseNames.get(i);
+				if(oneName.asText().length() == 11 || oneName.asText().length() == 12) {					
+					CourseSFQ c = new CourseSFQ();
+					c.setName(oneName.asText());
+					result.add(c);
+				} else {
+					continue;
+				}
+			}
+			
+			int count = -1;
+			List<?> tables = (List<?>) page.getByXPath("//table[@border='1' and @width='700' and @cellpadding='0' and @cellspacing='0']");	
+
+			for(int i = 1; i < tables.size(); i++) {   
+				HtmlElement oneTable = (HtmlElement) tables.get(i);
+				List<?> rows = (List<?>)oneTable.getByXPath(".//tr");
+				
+				for(int j = 1; j < rows.size()-1; j++) {			
+					HtmlElement oneRow = (HtmlElement) rows.get(j);
+					List<?>cells = (List<?>)oneRow.getByXPath(".//td");
+					
+					if(cells.size() == 6) { // a new course, go to the next element in the Vector
+						count++;
+						continue;
+					}
+					
+					if(cells.size() == 8) {
+						HtmlElement cellTwo = (HtmlElement)cells.get(1);
+						HtmlElement cellThree = (HtmlElement)cells.get(2);
+						HtmlElement cellFour = (HtmlElement)cells.get(3);
+						HtmlElement cellFive = (HtmlElement)cells.get(4);
+						
+						if(cellThree.asText().length() == 1) { //cell three is empty, this row is a section												
+							// get mean string of this section
+							String tempMeanStr = cellFour.asText();
+							int n;
+							for(n = 0; n < tempMeanStr.length(); n++) {
+								if(tempMeanStr.charAt(n) == '(') {
+									break;
+								} 
+							}
+							String meanStr = tempMeanStr.substring(0, n); // get the string type of mean
+							
+							if(!meanStr.equals("-")) {  //in case the - appears
+								// num of sections ++
+								result.elementAt(count).updateNumOfSections();
+								double meanOfSection = Double.valueOf(meanStr.toString()); // convert to double type 
+								// set mean of this section
+								result.elementAt(count).getOneSection(result.elementAt(count).getNumOfSections() - 1).setMean(meanOfSection);							
+							}
+							
+						} else { // this row is an instructor									
+							// get mean of this instructor
+							String tempInsMeanInThisSection = cellFive.asText();							
+							int n;
+							for(n = 0; n < tempInsMeanInThisSection.length(); n++) {
+								if(tempInsMeanInThisSection.charAt(n) == '(') {
+									break;
+								} 
+							}
+							String insMeanInThisSection = tempInsMeanInThisSection.substring(0, n);
+							
+							if(!insMeanInThisSection.equals("-") && !cellThree.asText().equals("  ")) {
+								// num of instructors ++
+								result.elementAt(count).getOneSection(result.elementAt(count).getNumOfSections()-1).updateNumOfInstructors();
+								//use this instructor's name to construct
+								Instructor tempIns = new Instructor(cellThree.asText()); 															
+								double insMean = Double.valueOf(insMeanInThisSection.toString()); //get double type of instructor mean in this section							
+								SectionSFQ tempSection = result.elementAt(count).getOneSection(result.elementAt(count).getNumOfSections()-1); //copy the section being processed
+								//add this instructor to this section
+								result.elementAt(count).getOneSection(result.elementAt(count).getNumOfSections()-1).setInsByAnotherIns(tempIns, tempSection.getNumOfInstructors()-1);		
+								// set mean in the double[] in the same position as the instructor in the Instructor[]
+								result.elementAt(count).getOneSection(result.elementAt(count).getNumOfSections()-1).setInsMeanForThisSection(tempSection.getNumOfInstructors()-1, insMean);
+							}
+						
+						}
+					}
+				}
+			}
+			client.close();
+			return result;
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
 }
+
+
+

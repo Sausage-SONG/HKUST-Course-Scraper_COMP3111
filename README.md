@@ -1,10 +1,10 @@
 # HKUST Course Scraper
 The course project of HKUST 2019Spring COMP3111: Software Engineering Project.  
 Members of Group30:
-- NI Xiaoyuan
-- LI Mengxuan
-- SONG Sizhe
-
+- NI Xiaoyuan	-- Task 2, Task 3
+- LI Mengxuan	-- Task 5, Task 6
+- SONG Sizhe	-- Task 1, Task 4
+<br></br><br></br><br></br>
 # Emails regarding Project Tasks
 ## Task 4: Timetable
 ### Sent by SONG Sizhe  
@@ -26,14 +26,11 @@ Members of Group30:
 > 1. Font size problem. Small size is not a problem since the spec does not specify on the size of the font as long as it is readable. Two lines is a specification and should be obey for most of the case. In your example COMP1021 LA1 is good. If you want to change the fonts of COMP1022P or make it single line due to space limit, it is acceptable given that you keep some normal slot like COMP1021 LA1 in two lines.  
 In short, the second screen shot given is OK.  
 >  
-> 2. Overlap issue. Don’t over complicate the issue. The spec says overlap and it will cause reading problem anyway. So it is ok to make it difficult to read.  
+> 2. Overlap issue. Don’t over complicate the issue. The spec says overlap and it will cause reading problem anyway. So it is ok to make it difficult to read. 
 
+<br></br><br></br><br></br>
 # Project Details:
-
 ## Project Problem Statement and Activities
-
-
-
 
 > **Activity 1 Due (6%): 18-3-2019 (Wk 7 Mon) 20:00**
 > Submission details will be provided on Canvas
