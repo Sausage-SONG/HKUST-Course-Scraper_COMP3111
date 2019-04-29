@@ -122,13 +122,14 @@ public class Scraper {
 	}
 	
 	/**
-	 * scrape the course website using the given information<br/>
+	 * scrape the course website using the given information<br>
 	 * 'enrolledSections' is passed so that this function will ignore those sections (to avoid having two copies of one single course)
 	 * 
 	 * @param baseurl the base url of course website
 	 * @param term a four digit string (e.g. "1830")
 	 * @param sub the subject to search (e.g. "COMP")
 	 * @param enrolledSections a list of sections that have been enrolled
+	 * @param courseMustBeValid whether only scrape valid courses
 	 * @return a list of courses (scraping result)
 	 */
 	public List<Course> scrape(String baseurl, String term, String sub, List<Section> enrolledSections, boolean courseMustBeValid) {
@@ -148,12 +149,15 @@ public class Scraper {
 				// set course title, if already exist in enrolled section list, skip this one
 				HtmlElement title = (HtmlElement) htmlItem.getFirstByXPath(".//h2");
 				c.setTitle(title.asText());
+				boolean found = false;
 				for (Section section : enrolledSections) {
 					if (c.getSimplifiedTitle().equals(section.getCourseCode())) {
 						result.add(section.getParent());
-						continue;
+						found = true;
+						break;
 					}
 				}
+				if (found) continue;
 				
 				// set course exclusions and common core information
 				List<?> popupdetailslist = (List<?>) htmlItem.getByXPath(".//div[@class='popupdetail']/table/tbody/tr");
