@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  *  a section has an array of slots, and a Course type reference that refers to the course it belongs to. 
- *  ( Course > Section > Slot)<br>
+ *  ( Course - Section - Slot)<br>
  *  <br>
  *  Attributes:<br>
  *  String sectionTitle: full section title (e.g. "L1 (1038)")<br>

@@ -81,7 +81,7 @@ public class Instructor {
 	
 	/**
 	 * Add the new mean to total mark of the instructor
-	 * @param d
+	 * @param d mark to add
 	 */
 	public void updateTotalMark(double d) {
 		totalMark += d;
