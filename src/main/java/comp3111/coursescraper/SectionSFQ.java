@@ -1,7 +1,7 @@
 package comp3111.coursescraper;
 
 /**
- * a SectionSFQ has an array of Instructors and an array of double. (SectionSFQ > Instructor)<br>
+ * a SectionSFQ has an array of Instructors and an array of double. (SectionSFQ - Instructor)<br>
  * <br>
  * Attributes:<br>
  * double mean: mean of this SectionSFQ (scraped from the website)
