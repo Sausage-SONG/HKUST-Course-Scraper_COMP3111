@@ -160,11 +160,14 @@ public class Controller {
     /*
      *  Task 5
      */
-    /**
-     * 
-     */
     int numOfClickOnAllSubjectSearch = 0;
     @FXML
+    /**
+     * Search every subject on the course website. 
+     * The total number of subjects and the total number of courses will be printed on the console.
+     * When a subject is scraped, the name of this subject and " is done" will be printed on the system console.(e.g. When COMP is scraped, "COMP is done" will be printed on the system console)
+     * This function is triggered by 'All Subject Search' button
+     */
     void allSubjectSearch() {
     	buttonSfqEnrollCourse.setDisable(false);
     	courses.clear();
@@ -179,7 +182,7 @@ public class Controller {
 	    		protected Void call() {   			
 	    	    	for (int i = 0; i<allSubject.size(); i++) {
 	    	    		List<Course> OneSubjectCourse = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), allSubject.get(i), enrolledSections, false);	
-						courses.addAll(OneSubjectCourse);    	    	    	    		
+						courses.addAll(OneSubjectCourse); 	    	    	    		
 	    	    		System.out.println(allSubject.get(i)+" is done;"); 
 	    	    		updateProgress(i+1,allSubject.size());  //i ----> i + 1   
 	    	    	}
@@ -206,6 +209,11 @@ public class Controller {
      *  Task 6
      */
     @FXML
+    /**
+     * Get the SFQ score of all instructors appear on the course SFQ website. 
+     * The SFQ score of all instructors appear on the course SFQ website will be printed on the console.
+     * This function is triggered by 'List instructors' average SFQ' button.
+     */
     public void findInstructorSfq() {
     	textAreaConsole.clear();
     	List<?>allCourses = scraper.scrapeSFQ(textfieldSfqUrl.getText());
@@ -221,13 +229,13 @@ public class Controller {
     					if(allInstructors.elementAt(k).getName().equals(temp.getOneSection(j).getInstructor(m).getName())) {
     						exist = true;
     						allInstructors.elementAt(k).updateTotalMark(temp.getOneSection(j).getInsMeanForThisSection(m));
-    						allInstructors.elementAt(k).updateNumOfSectionsTeached();
+    						allInstructors.elementAt(k).updateNumOfSectionsTeaches();
     					}	
     				}
     				if(!exist) {
     					Instructor ins = new Instructor();
     					ins.setName(temp.getOneSection(j).getInstructor(m).getName());
-    					ins.updateNumOfSectionsTeached();
+    					ins.updateNumOfSectionsTeaches();
     					ins.updateTotalMark(temp.getOneSection(j).getInsMeanForThisSection(m));
     					allInstructors.add(ins);
     				}
@@ -243,6 +251,11 @@ public class Controller {
     }
     
     @FXML
+    /**
+     * Get the SFQ score of enrolled courses. 
+     * The SFQ score of all the courses enrolled will be printed on the console.
+     * This function is triggered by 'Find SFQ with my enrolled courses' button.
+     */
     public void findSfqEnrollCourse() {
     	textAreaConsole.clear();
     	List<?>allCourses = scraper.scrapeSFQ(textfieldSfqUrl.getText());
@@ -295,6 +308,7 @@ public class Controller {
      *  Task 1: Search function for button "Search".
      */
     /**
+     * generate backend info for task 1
      * @return a string of information required by task 1 (# of courses, # of sections, instructors' names)
      */
     public String backendInfo() {
@@ -575,9 +589,9 @@ public class Controller {
                         	textAreaConsole.setText("The following sections are enrolled:"+'\n');
                         	for (Section item: enrolledSections) {
                         		String newline = item.getCourseCode();
-                        		newline = newline + '\t'+ item.getCourseName() + '\t' +item.getSectionTitle();
+                        		newline = newline + '\t'+ item.getCourseName() + '\t' +item.getSectionTitle() + '\n';
                         		
-                        		textAreaConsole.setText(textAreaConsole.getText()+'\n'+ newline);
+                        		textAreaConsole.setText(textAreaConsole.getText() + newline);
                         	}
                         }
                     });

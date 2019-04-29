@@ -41,14 +41,17 @@ public class Section {
 	 *  Title
 	 */
 	/**
-	 * @param title the title to set
+	 * set the section title
+	 * @param title the section title to set
 	 */
 	public void setSectionTitle(String title) { sectionTitle = title; }
 	/**
+	 * get the section title
 	 * @return the section title
 	 */
 	public String getSectionTitle() { return sectionTitle; }
 	/**
+	 * get the simplified section title
 	 * @return the simplified section title (no absolute id) (i.e. Type + Digit) (e.g. "L1")
 	 */
 	public String getSimplifiedTitle() {
@@ -61,10 +64,12 @@ public class Section {
 	 *  Parent
 	 */
 	/**
+	 * set the parent course
 	 * @param c the parent course to set
 	 */
 	public void setParent(Course c) { parent = c; }
 	/**
+	 * get the parent course
 	 * @return the parent course
 	 */
 	public Course getParent() { return parent; }
@@ -74,19 +79,23 @@ public class Section {
 	 *  Slots
 	 */
 	/**
+	 * get the number of slots
 	 * @return the number of slots
 	 */
 	public int getNumSlots() { return numSlots; }
 	/**
+	 * set the number of slots
 	 * @param num the number of slots to set
 	 */
 	public void setNumSlots(int num) { numSlots = num; }
 	/**
+	 * get a slot by index
 	 * @param i the index of the slot
 	 * @return the slot specified by the index
 	 */
 	public Slot getSlot(int i) { return (i >= 0 && i < numSlots) ? slots[i] : null; }
 	/**
+	 * add a slot
 	 * @param s the slot to add
 	 */
 	public void addSlot(Slot s) {
@@ -101,6 +110,7 @@ public class Section {
 	 *  AM, PM and Weekday Boolean Test
 	 */
 	/**
+	 * test whether a section has slot(s) in AM
 	 * @return whether a section has slot(s) in AM
 	 */
 	public boolean hasAM() {
@@ -111,6 +121,7 @@ public class Section {
 		return false;
 	}
 	/**
+	 * test whether a section has slot(s) in PM
 	 * @return whether a section has slot(s) in PM
 	 */
 	public boolean hasPM() {
@@ -121,6 +132,7 @@ public class Section {
 		return false;
 	}
 	/**
+	 * test whether a section has slot(s) on a specific weekday
 	 * @param day the weekday, from 0 to 6
 	 * @return whether a section has slot(s) on a specific weekday
 	 */
@@ -138,6 +150,7 @@ public class Section {
 	 */
 	public static final char[] digit = {'0','1','2','3','4','5','6','7','8','9'};
 	/**
+	 * test whether a character is a digit
 	 * @param c a character
 	 * @return whether the character is a digit
 	 */
@@ -148,6 +161,7 @@ public class Section {
 		return false;
 	}
 	/**
+	 * test whether a section is a lab or a tutorial
 	 * @return whether a section is a lab or a tutorial
 	 */
 	public boolean isLabOrTuto() {
@@ -159,6 +173,7 @@ public class Section {
 		return false;
 	}
 	/**
+	 * test whether the section is valid (valid format: L/T/LA + digit)
 	 * @return whether the section is valid (valid format: L/T/LA + digit)
 	 */
 	public boolean isValid() {
@@ -178,14 +193,15 @@ public class Section {
 	 *  Task 3 Special String 
 	 */
 	/**
+	 * get the course code(simplified title) of a section (e.g. "COMP3111")
 	 * @return the course code(simplified title) of a section (e.g. "COMP3111")
 	 */
-
 	public String getCourseCode() {
 		return this.getParent().getSimplifiedTitle();
 	}
 	
 	/**
+	 * get the course name of a section (e.g. "Introduction to Computing with Java")
 	 * @return the course name of a section (e.g. "Introduction to Computing with Java")
 	 */
 	public String getCourseName() {
@@ -196,6 +212,7 @@ public class Section {
 	}
 	
 	/**
+	 * get a String of names of instructors teaching this section,  return "N/A" if no slot in this section
 	 * @return a String of names of instructors teaching this section,  return "N/A" if no slot in this section
 	 */
 	public String getInstructorList() {
@@ -217,12 +234,14 @@ public class Section {
 	 *  Enrolled
 	 */
 	/**
+	 * get enrolled
 	 * @return whether a section is enrolled
 	 */
 	public Boolean getEnrolled() {
 		return enrolled;
 	}
 	/**
+	 * set enrolled
 	 * @param b a boolean to set, true -- enrolled, false -- not enrolled
 	 */
 	public void setEnrolled(boolean b) {

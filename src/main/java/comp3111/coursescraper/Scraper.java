@@ -122,7 +122,7 @@ public class Scraper {
 	}
 	
 	/**
-	 * scrape the course website using the given information<br/>
+	 * scrape the course website using the given information<br>
 	 * 'enrolledSections' is passed so that this function will ignore those sections (to avoid having two copies of one single course)
 	 * 
 	 * @param baseurl the base url of course website
@@ -149,12 +149,15 @@ public class Scraper {
 				// set course title, if already exist in enrolled section list, skip this one
 				HtmlElement title = (HtmlElement) htmlItem.getFirstByXPath(".//h2");
 				c.setTitle(title.asText());
+				boolean found = false;
 				for (Section section : enrolledSections) {
 					if (c.getSimplifiedTitle().equals(section.getCourseCode())) {
 						result.add(section.getParent());
-						continue;
+						found = true;
+						break;
 					}
 				}
+				if (found) continue;
 				
 				// set course exclusions and common core information
 				List<?> popupdetailslist = (List<?>) htmlItem.getByXPath(".//div[@class='popupdetail']/table/tbody/tr");
@@ -197,6 +200,12 @@ public class Scraper {
 		return null;
 	}
 
+	/**
+	 * Get a string list of all the subjects' name(e.g. "COMP", "ELEC").<br>
+	 * @param baseurl the base url of course website
+	 * @param term a four digit string which represents the term(e.g. "1830").
+	 * @return a string list of all the subjects' name(scraping result).
+	 */
 	public List<String> scrapeSubject(String baseurl, String term){
 		try {
 			HtmlPage page = client.getPage(baseurl +"/" + term+ "/");
@@ -219,7 +228,11 @@ public class Scraper {
 		return null;
 	}
 
-
+	/**
+	 * Get a CourseSFQ list of all the courses on the SFQ website.<br>
+	 * @param sfqurl the url of the course SFQ website
+	 * @return a CourseSFQ list of all the courses on the SFQ website(scraping result).
+	 */
 	public List<?> scrapeSFQ (String sfqurl){
 		try {
 			
@@ -301,8 +314,7 @@ public class Scraper {
 								result.elementAt(count).getOneSection(result.elementAt(count).getNumOfSections()-1).setInsByAnotherIns(tempIns, tempSection.getNumOfInstructors()-1);		
 								// set mean in the double[] in the same position as the instructor in the Instructor[]
 								result.elementAt(count).getOneSection(result.elementAt(count).getNumOfSections()-1).setInsMeanForThisSection(tempSection.getNumOfInstructors()-1, insMean);
-							}
-						
+							}						
 						}
 					}
 				}
