@@ -4,7 +4,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import java.util.List;
 /**
- * A CourseSFQ has an array of SectionSFQ. (CourseSFQ > SectionSFQ > Instructor)<br>
+ * A CourseSFQ has an array of SectionSFQ. (CourseSFQ - SectionSFQ - Instructor)<br>
  * <br>
  * Attributes:<br>
  * String courseName: the name of the course scraped (e.g. " COMP 1021 ") The name of the course has spaces.<br>

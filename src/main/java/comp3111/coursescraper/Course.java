@@ -1,7 +1,7 @@
 package comp3111.coursescraper;
 
 /**
- *  a course has an array of sections. ( Course > Section > Slot)<br>
+ *  a course has an array of sections. ( Course - Section - Slot)<br>
  *  <br>
  *  Attributes:<br>
  *  String title: full course title (e.g. "COMP 1022P - Introduction to Computing with Java (3 units)")<br>
@@ -44,7 +44,7 @@ public class Course {
 	}
 	/**
 	 * set the number of sections
-	 * @param numSlots the number of sections to set
+	 * @param numSections the number of sections to set
 	 */
 	public void setNumSections(int numSections) {
 		this.numSections = numSections;
@@ -125,7 +125,7 @@ public class Course {
 	}
 	/**
 	 * set the exclusion
-	 * @param the exclusion the exclusion to set
+	 * @param exclusion the exclusion the exclusion to set
 	 */
 	public void setExclusion(String exclusion) {
 		this.exclusion = exclusion;

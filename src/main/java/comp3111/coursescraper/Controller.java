@@ -43,7 +43,9 @@ import java.util.HashMap;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;  
 
-
+/**
+ * UI Controller
+ */
 public class Controller {
 
     @FXML
@@ -465,7 +467,6 @@ public class Controller {
     
     
 
-    @FXML
     /*
      *  Task 2 (part 1): Update the consoler whenever the checkboxs status has changed.
      */
@@ -474,7 +475,7 @@ public class Controller {
      * if 'Select All' is clicked, check all the checkboxes and set the text to be 'DeselectAll'
      * if 'Deselect All' is clicked, uncheck all the checkboxes and set the text to be 'SelectAll'
      * every time the checkbox change, the filter will be refreshed
-	 */
+     */
     public void SelectDeselectAll() {
     	final CheckBox[] ListAll = {CheckboxAM, CheckboxPM,CheckboxMon,CheckboxTue,CheckboxWed,CheckboxThu,CheckboxFri,
     			CheckboxSat,CheckboxCC,CheckboxNoEx,CheckboxWithLabs};
@@ -499,7 +500,7 @@ public class Controller {
      */
    /**
     *  Check the status of all the checkboxes and find all sections of a course that fulfill all the requirement.
-    *  Then print the course information on the consoler  
+    *  Then print the course information on the console 
     */
     public void refreshCheckBox() {
     	Vector<boolean[]> flags=new Vector<boolean[]>();
