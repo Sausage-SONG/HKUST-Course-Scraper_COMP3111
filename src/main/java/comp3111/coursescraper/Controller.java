@@ -466,6 +466,9 @@ public class Controller {
     
 
     @FXML
+    /*
+     *  Task 2 (part 1): Update the consoler whenever the checkboxs status has changed.
+     */
     /**
      * Deal with the function of button SelectAll and DeselectAll
      * if 'Select All' is clicked, check all the checkboxes and set the text to be 'DeselectAll'
@@ -491,8 +494,12 @@ public class Controller {
     	refreshCheckBox();
     }
     
+    /*
+     *  Task 2 (part 2): Update the consoler whenever the checkboxs status has changed.
+     */
    /**
-    * 
+    *  Check the status of all the checkboxes and find all sections of a course that fulfill all the requirement.
+    *  Then print the course information on the consoler  
     */
     public void refreshCheckBox() {
     	Vector<boolean[]> flags=new Vector<boolean[]>();
@@ -549,6 +556,17 @@ public class Controller {
     		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
     	}
     }
+    
+    /*
+     *  Task 3: Display all the filtered sections on the table with an chechbox to enroll in the section.
+     */
+    
+    /**
+     * Every time tab List is selected, createTable() will be called.
+     * All the sections in filteredSections will be displayed in the table.
+     * Once the checkbox is clicked, the section will be added into the enrolledSections;
+     * And if the checkbox is unclicked, the section will be removed from the enrolledSections.
+     */
     
     public void createTable() {
     	filteredSections.clear();
