@@ -196,6 +196,12 @@ public class Scraper {
 		return null;
 	}
 
+	/**
+	 * Get a string list of all the subjects' name(e.g. "COMP", "ELEC").<br>
+	 * @param baseurl the base url of course website
+	 * @param term a four digit string which represents the term(e.g. "1830").
+	 * @return a string list of all the subjects' name(scraping result).
+	 */
 	public List<String> scrapeSubject(String baseurl, String term){
 		try {
 			HtmlPage page = client.getPage(baseurl +"/" + term+ "/");
@@ -218,7 +224,11 @@ public class Scraper {
 		return null;
 	}
 
-
+	/**
+	 * Get a CourseSFQ list of all the courses on the SFQ website.<br>
+	 * @param sfqurl the url of the course SFQ website
+	 * @return a CourseSFQ list of all the courses on the SFQ website(scraping result).
+	 */
 	public List<?> scrapeSFQ (String sfqurl){
 		try {
 			
@@ -300,8 +310,7 @@ public class Scraper {
 								result.elementAt(count).getOneSection(result.elementAt(count).getNumOfSections()-1).setInsByAnotherIns(tempIns, tempSection.getNumOfInstructors()-1);		
 								// set mean in the double[] in the same position as the instructor in the Instructor[]
 								result.elementAt(count).getOneSection(result.elementAt(count).getNumOfSections()-1).setInsMeanForThisSection(tempSection.getNumOfInstructors()-1, insMean);
-							}
-						
+							}						
 						}
 					}
 				}
