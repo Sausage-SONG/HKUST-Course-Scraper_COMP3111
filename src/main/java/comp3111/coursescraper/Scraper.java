@@ -149,12 +149,15 @@ public class Scraper {
 				// set course title, if already exist in enrolled section list, skip this one
 				HtmlElement title = (HtmlElement) htmlItem.getFirstByXPath(".//h2");
 				c.setTitle(title.asText());
+				boolean found = false;
 				for (Section section : enrolledSections) {
 					if (c.getSimplifiedTitle().equals(section.getCourseCode())) {
 						result.add(section.getParent());
-						continue;
+						found = true;
+						break;
 					}
 				}
+				if (found) continue;
 				
 				// set course exclusions and common core information
 				List<?> popupdetailslist = (List<?>) htmlItem.getByXPath(".//div[@class='popupdetail']/table/tbody/tr");

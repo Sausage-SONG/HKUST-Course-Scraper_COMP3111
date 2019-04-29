@@ -179,7 +179,7 @@ public class Controller {
 	    		protected Void call() {   			
 	    	    	for (int i = 0; i<allSubject.size(); i++) {
 	    	    		List<Course> OneSubjectCourse = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), allSubject.get(i), enrolledSections, false);	
-						courses.addAll(OneSubjectCourse);    	    	    	    		
+						courses.addAll(OneSubjectCourse); 	    	    	    		
 	    	    		System.out.println(allSubject.get(i)+" is done;"); 
 	    	    		updateProgress(i+1,allSubject.size());  //i ----> i + 1   
 	    	    	}
@@ -576,9 +576,9 @@ public class Controller {
                         	textAreaConsole.setText("The following sections are enrolled:"+'\n');
                         	for (Section item: enrolledSections) {
                         		String newline = item.getCourseCode();
-                        		newline = newline + '\t'+ item.getCourseName() + '\t' +item.getSectionTitle();
+                        		newline = newline + '\t'+ item.getCourseName() + '\t' +item.getSectionTitle() + '\n';
                         		
-                        		textAreaConsole.setText(textAreaConsole.getText()+'\n'+ newline);
+                        		textAreaConsole.setText(textAreaConsole.getText() + newline);
                         	}
                         }
                     });
