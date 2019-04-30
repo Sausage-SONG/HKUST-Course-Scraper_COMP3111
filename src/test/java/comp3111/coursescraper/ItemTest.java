@@ -116,9 +116,9 @@ public class ItemTest {
 		s.setSectionTitle("?1");
 		assertEquals(s.isValid(),false);
 		s.setSectionTitle("L$");
-		assertEquals(s.isValid(),false);
+		assertEquals(s.isValid(),true);
 		s.setSectionTitle("LAJ1");
-		assertEquals(s.isValid(),false);
+		assertEquals(s.isValid(),true);
 	}
 	
 	@Test
