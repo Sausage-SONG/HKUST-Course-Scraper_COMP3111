@@ -131,7 +131,6 @@ public class Scraper {
 	 * @param enrolledSections a list of sections that have been enrolled
 	 * @param courseMustBeValid whether only scrape valid courses
 	 * @return a list of courses (scraping result)
-	 * @throws e cannot get the page through the url
 	 */
 	public List<Course> scrape(String baseurl, String term, String sub, List<Section> enrolledSections, boolean courseMustBeValid) {
 

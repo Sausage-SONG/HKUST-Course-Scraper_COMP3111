@@ -26,7 +26,15 @@ public class Slot {
 	private String venue;
 	private List<String> instName;
 	private Section parent;
+	
+	/**
+	 * An array represents six days in a week, from Monday to Saturday
+	 */
 	public static final String DAYS[] = {"Mo", "Tu", "We", "Th", "Fr", "Sa"};
+	
+	/**
+	 * 
+	 */
 	public static final Map<String, Integer> DAYS_MAP = new HashMap<String, Integer>();
 	static {
 		for (int i = 0; i < DAYS.length; i++)
@@ -39,7 +47,7 @@ public class Slot {
 	public Slot() { instName = new Vector<String>(); }
 	
 	/**
-	 *  convert a slot to a string
+	 * 
 	 */
 	public String toString() {
 		return DAYS[day] + " " + start.toString() + "-" + end.toString() + ": " + venue;
