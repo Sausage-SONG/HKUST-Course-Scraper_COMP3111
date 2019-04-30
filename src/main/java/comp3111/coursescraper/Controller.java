@@ -365,6 +365,29 @@ public class Controller {
     }
     
     /**
+     * convert a list of courses into string of courses information to be displayed in the console.
+     * @param courses a list of courses
+     * @return a string of courses information
+     */
+    public String printCourses (List<Course> courses) {
+    	String total = "";
+    	for (Course c : courses) {
+    		String newline = c.getTitle() + "\n";
+    		for (int i = 0; i < c.getNumSections(); i++) {
+    			Section s = c.getSection(i);
+    			newline += s.getSectionTitle() + "\n";
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot t = s.getSlot(j);
+    				newline +=   "\t" + t + "\n";
+    			}
+    		}
+    		total += newline + '\n';
+    	}
+    	return total;
+    }
+  
+    @FXML
+    /**
      *  the function triggered by 'search' button, this function will call scrapers and display
      *  courses in the textArea
      */
@@ -386,18 +409,8 @@ public class Controller {
     	textAreaConsole.appendText(this.backendInfo());
     	
     	// display details of each course
-    	for (Course c : courses) {
-    		String newline = c.getTitle() + "\n";
-    		for (int i = 0; i < c.getNumSections(); i++) {
-    			Section s = c.getSection(i);
-    			newline += "Section: " + s.getSectionTitle() + "\n";
-    			for (int j = 0; j < s.getNumSlots(); ++j) {
-    				Slot t = s.getSlot(j);
-    				newline += "Slot" + " " + j + ": " + t + "\n";
-    			}
-    		}
-    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
-    	}
+    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + printCourses(courses));
+    	
     }
     
 
@@ -541,23 +554,11 @@ public class Controller {
     	//store the filtered Sections in the array filteredCourses
     	filteredCourses.clear();
     	for(int i=0; i<courses.size();i++){
-    			if (flags.get(i)[11]) filteredCourses.add(courses.get(i));
+    		if (flags.get(i)[11]) filteredCourses.add(courses.get(i));
     	}
     	
     	//print all the filtered Sections
-    	textAreaConsole.clear();
-    	for (Course c : filteredCourses) {
-    		String newline = c.getTitle() + "\n";
-    		int counter = 0;
-    		for (int i = 0; i < c.getNumSections(); i++) {
-    			Section s = c.getSection(i);
-    			for (int j = 0; j < s.getNumSlots(); ++j) {
-    				Slot t = s.getSlot(j);
-    				newline += "Slot" + " " + (counter++) + ": " + s.getSectionTitle() + "\t" + t + "\n";
-    			}
-    		}
-    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
-    	}
+    	textAreaConsole.setText(printCourses(filteredCourses));
     }
     
     /*
@@ -614,6 +615,7 @@ public class Controller {
                         		
                         		textAreaConsole.setText(textAreaConsole.getText() + newline);
                         	}
+                        	textAreaConsole.setText(textAreaConsole.getText() + '\n' +printCourses(filteredCourses));
                         }
                     });
                     return new SimpleObjectProperty<CheckBox>(checkBox);

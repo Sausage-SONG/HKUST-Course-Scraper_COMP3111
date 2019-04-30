@@ -84,15 +84,6 @@ public class ItemTest {
 		s.setParent(c);
 		assertEquals(s.getParent(),c);
 	}
-
-	
-	@Test
-	public void testIsDigit() {
-		assertEquals(Section.isDigit('1'),true);
-		assertEquals(Section.isDigit('5'),true);
-		assertEquals(Section.isDigit('a'),false);
-		assertEquals(Section.isDigit('!'),false);
-	}
 	
 	@Test
 	public void testIsLabOrTuto() {

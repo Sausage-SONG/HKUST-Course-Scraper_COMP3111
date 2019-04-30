@@ -149,21 +149,6 @@ public class Section {
 	 *  Section Type Boolean Test
 	 */
 	/**
-	 *  Digit Char
-	 */
-	public static final char[] digit = {'0','1','2','3','4','5','6','7','8','9'};
-	/**
-	 * test whether a character is a digit
-	 * @param c a character
-	 * @return whether the character is a digit
-	 */
-	public static boolean isDigit(char c) {
-		for (int i = 0; i < 10; ++i)
-			if (c == digit[i])
-				return true;
-		return false;
-	}
-	/**
 	 * test whether a section is a lab or a tutorial
 	 * @return whether a section is a lab or a tutorial
 	 */
@@ -176,18 +161,12 @@ public class Section {
 		return false;
 	}
 	/**
-	 * test whether the section is valid (valid format: L/T/LA + digit)
-	 * @return whether the section is valid (valid format: L/T/LA + digit)
+	 * test whether the section is valid (valid format: start with L/T/LA)
+	 * @return whether the section is valid (valid format: start with L/T/LA)
 	 */
 	public boolean isValid() {
-		if (sectionTitle.charAt(0) == 'T') {
+		if (sectionTitle.charAt(0) == 'T' || sectionTitle.charAt(0) == 'L')
 			return true;
-		} else if (sectionTitle.charAt(0) == 'L') {
-			if(isDigit(sectionTitle.charAt(1)))
-				return true;
-			else if (sectionTitle.charAt(1) == 'A' && isDigit(sectionTitle.charAt(2)))
-				return true;
-		}
 		return false;
 	}
 	
