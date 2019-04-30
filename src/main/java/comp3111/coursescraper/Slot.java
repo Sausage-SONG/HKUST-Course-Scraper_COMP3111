@@ -33,7 +33,7 @@ public class Slot {
 	public static final String DAYS[] = {"Mo", "Tu", "We", "Th", "Fr", "Sa"};
 	
 	/**
-	 * 
+	 *  A map between integer to string (days)
 	 */
 	public static final Map<String, Integer> DAYS_MAP = new HashMap<String, Integer>();
 	static {
@@ -47,8 +47,10 @@ public class Slot {
 	public Slot() { instName = new Vector<String>(); }
 	
 	/**
-	 * 
+	 * convert a slot to a string
+	 * @return a slot string 
 	 */
+	@Override
 	public String toString() {
 		return DAYS[day] + " " + start.toString() + "-" + end.toString() + ": " + venue;
 	}

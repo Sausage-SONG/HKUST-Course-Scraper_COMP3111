@@ -386,7 +386,6 @@ public class Controller {
     	return total;
     }
   
-    @FXML
     /**
      *  the function triggered by 'search' button, this function will call scrapers and display
      *  courses in the textArea

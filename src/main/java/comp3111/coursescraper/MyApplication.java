@@ -44,10 +44,12 @@ public class MyApplication extends Application {
 	 * 
 	 * This function will be called by the framework shortly after the program started. You are not required to touch any part of this.
 	 */
+    /**
+     *  Start UI
+     *  @param stage stage
+     *  @throws Exception
+     */
 	@Override
-	/**
-	 * 
-	 */
 	public void start(Stage stage) throws Exception {
     	FXMLLoader loader = new FXMLLoader();
     	loader.setLocation(getClass().getResource(UI_FILE));
@@ -56,8 +58,6 @@ public class MyApplication extends Application {
    		stage.setScene(scene);
    		stage.setTitle("Course Scraper");
    		stage.show();
-    		
-
 	}
 
 	/**
