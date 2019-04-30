@@ -1,6 +1,3 @@
-/**
- * 
- */
 package comp3111.coursescraper;
 
 import javafx.application.Application;
@@ -12,7 +9,7 @@ import javafx.scene.Scene;
 
 
 /**
- * @author kevinw
+ * 
  * 
  * The entry point of the entire program. It is quite unlikely you need to change this file. But you can change it if you want :)
  * 
@@ -34,9 +31,11 @@ import javafx.scene.Scene;
  * function will do is to load this ui.fxml into a GUI application. The ui.fxml has specified that "all event will be handled by the class - 
  * Controller". Let's trace the function void start which will be called by the framework shortly after the program start.  
  *
- * 
+ * @author kevinw
  */
 public class MyApplication extends Application {
+	
+	
 
     private static final String UI_FILE = "/ui.fxml";  //It is very important that you put the file under folder src/main/resources/
 	
@@ -46,6 +45,9 @@ public class MyApplication extends Application {
 	 * This function will be called by the framework shortly after the program started. You are not required to touch any part of this.
 	 */
 	@Override
+	/**
+	 * 
+	 */
 	public void start(Stage stage) throws Exception {
     	FXMLLoader loader = new FXMLLoader();
     	loader.setLocation(getClass().getResource(UI_FILE));

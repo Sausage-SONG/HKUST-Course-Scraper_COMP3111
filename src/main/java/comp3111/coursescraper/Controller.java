@@ -162,15 +162,18 @@ public class Controller {
     /*
      *  Task 5
      */
+    /**
+     * The number of clicks on button AllSubjectSearch
+     */
     int numOfClickOnAllSubjectSearch = 0;
-    @FXML
+
     /**
      * Search every subject on the course website. 
      * The total number of subjects and the total number of courses will be printed on the console.
      * When a subject is scraped, the name of this subject and " is done" will be printed on the system console.(e.g. When COMP is scraped, "COMP is done" will be printed on the system console)
      * This function is triggered by 'All Subject Search' button
      */
-    void allSubjectSearch() {
+    public void allSubjectSearch() {
     	buttonSfqEnrollCourse.setDisable(false);
     	courses.clear();
     	List<String> allSubject = scraper.scrapeSubject(textfieldURL.getText(), textfieldTerm.getText());
@@ -210,7 +213,6 @@ public class Controller {
     /*
      *  Task 6
      */
-    @FXML
     /**
      * Get the SFQ score of all instructors appear on the course SFQ website. 
      * The SFQ score of all instructors appear on the course SFQ website will be printed on the console.
@@ -252,7 +254,7 @@ public class Controller {
     	}
     }
     
-    @FXML
+    
     /**
      * Get the SFQ score of enrolled courses. 
      * The SFQ score of all the courses enrolled will be printed on the console.
@@ -361,12 +363,12 @@ public class Controller {
        	
        	return result;
     }
-    @FXML
+    
     /**
      *  the function triggered by 'search' button, this function will call scrapers and display
      *  courses in the textArea
      */
-    void search() {
+    public void search() {
     	// About Task 5
     	buttonSfqEnrollCourse.setDisable(false);
     	List<String> allSubject = scraper.scrapeSubject(textfieldURL.getText(), textfieldTerm.getText());
