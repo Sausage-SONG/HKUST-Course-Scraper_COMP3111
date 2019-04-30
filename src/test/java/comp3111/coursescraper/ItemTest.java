@@ -83,6 +83,7 @@ public class ItemTest {
 		Section s = new Section();
 		s.setParent(c);
 		assertEquals(s.getParent(),c);
+	}
 
 	
 	@Test
@@ -178,4 +179,65 @@ public class ItemTest {
 		assertEquals(s.isOn(4),true);
 		assertEquals(s.isOn(3),false);
 	}
+
+
+	/*
+	 * Test on CourseSFQ
+	 */
+
+	@Test
+	public void testSetName() {
+		CourseSFQ c = new CourseSFQ();
+		c.setName("Prof Jack");
+		assertEquals(c.getName(),"Prof Jack");
+	}
+	
+	/*
+	 * Test on SectionSFQ
+	 */
+	
+	/*
+	@Test
+	public void testSetMean() {
+		SectionSFQ s = new SectionSFQ();
+		s.setMean(90.5);
+		assertEquals(s.getMean(),90.5);
+	}
+	*/
+	
+	@Test
+	public void testSetNumOfInstructors() {
+		SectionSFQ s = new SectionSFQ();
+		s.setNumOfInstructors(3);
+		assertEquals(s.getNumOfInstructors(),3);
+	}
+	
+	/*
+	 * Test on Instructor
+	 */
+	@Test
+	public void testSetInsName() {
+		Instructor i = new Instructor();
+		i.setName("Jack");
+		assertEquals(i.getName(),"Jack");
+	}
+	
+	@Test
+	public void testSetNumOfSectionsTeaches() {
+		Instructor i = new Instructor();
+		i.setNumOfSectionsTeaches(5);
+		assertEquals(i.getNumOfSectionsTeaches(),5);
+	}
+	
+	/*
+	@Test
+	public void testSetTotalMark() {
+		Instructor i = new Instructor();
+		i.setTotalMark(225);
+		assertEquals(i.getTotalMark(),225);
+	}
+	*/
+
 }
+
+

@@ -34,8 +34,18 @@ import java.awt.Checkbox;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+
 import java.util.Map;
 import java.util.HashMap;
+
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;  
+
+/**
+ * UI Controller
+ */
 public class Controller {
 
     @FXML
@@ -143,23 +153,140 @@ public class Controller {
     @FXML
     private TextArea textAreaConsole;
     
+    //add button AllSubjectSearch
+    @FXML
+    private Button AllSubjectSearch;
+    
     private Scraper scraper = new Scraper();
     
+    /*
+     *  Task 5
+     */
+    int numOfClickOnAllSubjectSearch = 0;
     @FXML
+    /**
+     * Search every subject on the course website. 
+     * The total number of subjects and the total number of courses will be printed on the console.
+     * When a subject is scraped, the name of this subject and " is done" will be printed on the system console.(e.g. When COMP is scraped, "COMP is done" will be printed on the system console)
+     * This function is triggered by 'All Subject Search' button
+     */
     void allSubjectSearch() {
+    	buttonSfqEnrollCourse.setDisable(false);
+    	courses.clear();
+    	List<String> allSubject = scraper.scrapeSubject(textfieldURL.getText(), textfieldTerm.getText());
     	
-    }
-
-    @FXML
-    void findInstructorSfq() {
-    	buttonInstructorSfq.setDisable(true);
-    }
-
-    @FXML
-    void findSfqEnrollCourse() {
-
+    	if(numOfClickOnAllSubjectSearch == 0) {
+    		textAreaConsole.setText("Total Number of Categories/Code Prefix: "+allSubject.size()+"\n");  
+    		numOfClickOnAllSubjectSearch ++;
+    	} else {
+	    	Task<Void> task = new Task<Void>() {
+	    		@Override
+	    		protected Void call() {   			
+	    	    	for (int i = 0; i<allSubject.size(); i++) {
+	    	    		List<Course> OneSubjectCourse = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(), allSubject.get(i), enrolledSections, false);	
+						courses.addAll(OneSubjectCourse); 	    	    	    		
+	    	    		System.out.println(allSubject.get(i)+" is done;"); 
+	    	    		updateProgress(i+1,allSubject.size());  //i ----> i + 1   
+	    	    	}
+	    			return null;
+	    		}
+	    	};    	
+	    	progressbar.progressProperty().bind(task.progressProperty());
+	    	Thread thread = new Thread(task);
+	    	thread.setDaemon(true);
+	    	thread.start();
+	    	task.setOnSucceeded((WorkerStateEvent t) ->
+	        {
+		    	textAreaConsole.appendText("Total Number of Courses fetched(invalid courses included): "+courses.size() + "\n");
+		    	textAreaConsole.appendText("\n" + this.backendInfo() + "\n");
+	        });
+	    }
+    	for (Course c : courses)
+    		if (!c.isValid())
+    			courses.remove(c);
     }
     
+    
+    /*
+     *  Task 6
+     */
+    @FXML
+    /**
+     * Get the SFQ score of all instructors appear on the course SFQ website. 
+     * The SFQ score of all instructors appear on the course SFQ website will be printed on the console.
+     * This function is triggered by 'List instructors' average SFQ' button.
+     */
+    public void findInstructorSfq() {
+    	textAreaConsole.clear();
+    	List<?>allCourses = scraper.scrapeSFQ(textfieldSfqUrl.getText());
+    	Vector <Instructor> allInstructors = new Vector<Instructor>();
+    	
+    	//construct the Vector of all instructors
+    	for(int i = 0; i<allCourses.size();i++) {
+    		CourseSFQ temp = (CourseSFQ) allCourses.get(i);
+    		for(int j = 0; j<temp.getNumOfSections(); j++) {   
+    			for(int m = 0; m<temp.getOneSection(j).getNumOfInstructors(); m++) { 
+    				boolean exist = false;
+    				for(int k = 0; k<allInstructors.size();k++) {
+    					if(allInstructors.elementAt(k).getName().equals(temp.getOneSection(j).getInstructor(m).getName())) {
+    						exist = true;
+    						allInstructors.elementAt(k).updateTotalMark(temp.getOneSection(j).getInsMeanForThisSection(m));
+    						allInstructors.elementAt(k).updateNumOfSectionsTeaches();
+    					}	
+    				}
+    				if(!exist) {
+    					Instructor ins = new Instructor();
+    					ins.setName(temp.getOneSection(j).getInstructor(m).getName());
+    					ins.updateNumOfSectionsTeaches();
+    					ins.updateTotalMark(temp.getOneSection(j).getInsMeanForThisSection(m));
+    					allInstructors.add(ins);
+    				}
+    			}
+    		}
+    	}
+    	
+    	//print out the information
+    	for(int i = 0; i<allInstructors.size();i++) {
+    		String s = "The SFQ of " + allInstructors.get(i).getName() +" is "+ allInstructors.get(i).getInsSFQ();
+    		textAreaConsole.appendText(s + "\n");
+    	}
+    }
+    
+    @FXML
+    /**
+     * Get the SFQ score of enrolled courses. 
+     * The SFQ score of all the courses enrolled will be printed on the console.
+     * This function is triggered by 'Find SFQ with my enrolled courses' button.
+     */
+    public void findSfqEnrollCourse() {
+    	textAreaConsole.clear();
+    	List<?>allCourses = scraper.scrapeSFQ(textfieldSfqUrl.getText());
+    	
+    	//get a string type Vector of the course code of all enrolled sections, without repeating course code
+    	Vector<String> enrolledCoursesCode = new Vector<String>();
+    	for(int i = 0; i<enrolledSections.size(); i++)
+    		if (!enrolledCoursesCode.contains(enrolledSections.get(i).getCourseCode()))
+        		enrolledCoursesCode.add(enrolledSections.get(i).getCourseCode());
+    	
+    	//if no course has been enrolled
+    	if (enrolledCoursesCode.isEmpty())
+    		textAreaConsole.setText("No course has been enrolled!\n");
+    	
+    	//compare the enrolled course code with all the courses scraped
+    	for(int i = 0; i<enrolledCoursesCode.size();i++) {
+    		boolean exist = false;
+    		for(int j = 0; j<allCourses.size(); j++) {
+    			CourseSFQ temp = (CourseSFQ) allCourses.get(j);
+    			if(temp.getName().replaceAll(" ", "").equals(enrolledCoursesCode.get(i))) {
+    				exist = true;
+    				textAreaConsole.appendText("SFQ of " + temp.getName() + " is " + temp.getCourseMean() + "\n");
+    			}
+    		}
+    		if(!exist) {
+    			textAreaConsole.appendText("The SFQ information of " + enrolledCoursesCode.get(i) + " is not found on the website" + "\n");
+    		}
+    	}
+    }
     
     
     /**
@@ -183,6 +310,7 @@ public class Controller {
      *  Task 1: Search function for button "Search".
      */
     /**
+     * generate backend info for task 1
      * @return a string of information required by task 1 (# of courses, # of sections, instructors' names)
      */
     public String backendInfo() {
@@ -190,11 +318,13 @@ public class Controller {
     	
     	// count and display # of courses and sections
     	int number_of_sections = 0,
-        	number_of_courses  = courses.size();
-        for (Course c : courses)
+        	number_of_courses  = 0;
+        for (Course c : courses) {
        		number_of_sections += c.getNumSections();
-       	result += "Total Number of difference sections in this search: " + number_of_sections + "\n" +
-       			  "Total Number of Course in this search: " + number_of_courses + "\n";
+       		number_of_courses += (c.isValid()) ? 1 : 0;
+        }
+       	result += "Total Number of different sections in this search: " + number_of_sections + "\n" +
+       			  "Total Number of courses in this search(only valid ones): " + number_of_courses + "\n";
        	
     	// find and display a list of instrutors who have teaching assignment but not at Tu 3:10PM
     	List<String> filteredInstructors = new Vector<String>();
@@ -231,36 +361,53 @@ public class Controller {
        	
        	return result;
     }
+    
+    /**
+     * convert a list of courses into string of courses information to be displayed in the console.
+     * @param courses a list of courses
+     * @return a string of courses information
+     */
+    public String printCourses (List<Course> courses) {
+    	String total = "";
+    	for (Course c : courses) {
+    		String newline = c.getTitle() + "\n";
+    		for (int i = 0; i < c.getNumSections(); i++) {
+    			Section s = c.getSection(i);
+    			newline += s.getSectionTitle() + "\n";
+    			for (int j = 0; j < s.getNumSlots(); ++j) {
+    				Slot t = s.getSlot(j);
+    				newline +=   "\t" + t + "\n";
+    			}
+    		}
+    		total += newline + '\n';
+    	}
+    	return total;
+    }
     @FXML
     /**
      *  the function triggered by 'search' button, this function will call scrapers and display
      *  courses in the textArea
      */
     void search() {
-    	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText(), enrolledSections);
+    	// About Task 5
+    	buttonSfqEnrollCourse.setDisable(false);
+    	List<String> allSubject = scraper.scrapeSubject(textfieldURL.getText(), textfieldTerm.getText());
+    	textAreaConsole.setText("Total Number of Categories/Code Prefix: "+allSubject.size()+"\n\n");  
+    
+    	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText(), enrolledSections, true);
     	
     	// Handle 404
     	if (courses == null) {
-    		textAreaConsole.setText("Oops! 404 Not Found! Please check your input.\n");
+    		textAreaConsole.appendText("Oops! 404 Not Found! Please check your input.\n");
     		return;
     	}
     	
     	// display task 1 information
-    	textAreaConsole.setText(this.backendInfo());
+    	textAreaConsole.appendText(this.backendInfo());
     	
     	// display details of each course
-    	for (Course c : courses) {
-    		String newline = c.getTitle() + "\n";
-    		for (int i = 0; i < c.getNumSections(); i++) {
-    			Section s = c.getSection(i);
-    			newline += "Section: " + s.getSectionTitle() + "\n";
-    			for (int j = 0; j < s.getNumSlots(); ++j) {
-    				Slot t = s.getSlot(j);
-    				newline += "Slot" + " " + j + ": " + t + "\n";
-    			}
-    		}
-    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
-    	}
+    	textAreaConsole.setText(textAreaConsole.getText() + "\n" + printCourses(courses));
+    	
     }
     
 
@@ -332,13 +479,15 @@ public class Controller {
     
     
 
-    @FXML
+    /*
+     *  Task 2 (part 1): Update the consoler whenever the checkboxs status has changed.
+     */
     /**
      * Deal with the function of button SelectAll and DeselectAll
      * if 'Select All' is clicked, check all the checkboxes and set the text to be 'DeselectAll'
      * if 'Deselect All' is clicked, uncheck all the checkboxes and set the text to be 'SelectAll'
      * every time the checkbox change, the filter will be refreshed
-	 */
+     */
     public void SelectDeselectAll() {
     	final CheckBox[] ListAll = {CheckboxAM, CheckboxPM,CheckboxMon,CheckboxTue,CheckboxWed,CheckboxThu,CheckboxFri,
     			CheckboxSat,CheckboxCC,CheckboxNoEx,CheckboxWithLabs};
@@ -358,8 +507,12 @@ public class Controller {
     	refreshCheckBox();
     }
     
+    /*
+     *  Task 2 (part 2): Update the consoler whenever the checkboxs status has changed.
+     */
    /**
-    * 
+    *  Check the status of all the checkboxes and find all sections of a course that fulfill all the requirement.
+    *  Then print the course information on the console 
     */
     public void refreshCheckBox() {
     	Vector<boolean[]> flags=new Vector<boolean[]>();
@@ -398,24 +551,23 @@ public class Controller {
     	//store the filtered Sections in the array filteredCourses
     	filteredCourses.clear();
     	for(int i=0; i<courses.size();i++){
-    			if (flags.get(i)[11]) filteredCourses.add(courses.get(i));
+    		if (flags.get(i)[11]) filteredCourses.add(courses.get(i));
     	}
     	
     	//print all the filtered Sections
-    	textAreaConsole.clear();
-    	for (Course c : filteredCourses) {
-    		String newline = c.getTitle() + "\n";
-    		int counter = 0;
-    		for (int i = 0; i < c.getNumSections(); i++) {
-    			Section s = c.getSection(i);
-    			for (int j = 0; j < s.getNumSlots(); ++j) {
-    				Slot t = s.getSlot(j);
-    				newline += "Slot" + " " + (counter++) + ": " + s.getSectionTitle() + "\t" + t + "\n";
-    			}
-    		}
-    		textAreaConsole.setText(textAreaConsole.getText() + "\n" + newline);
-    	}
+    	textAreaConsole.setText(printCourses(filteredCourses));
     }
+    
+    /*
+     *  Task 3: Display all the filtered sections on the table with an chechbox to enroll in the section.
+     */
+    
+    /**
+     * Every time tab List is selected, createTable() will be called.
+     * All the sections in filteredSections will be displayed in the table.
+     * Once the checkbox is clicked, the section will be added into the enrolledSections;
+     * And if the checkbox is unclicked, the section will be removed from the enrolledSections.
+     */
     
     public void createTable() {
     	filteredSections.clear();
@@ -441,6 +593,7 @@ public class Controller {
                     Section se = arg0.getValue();
                   
                     CheckBox checkBox = new CheckBox();
+                    checkBox.setId("sectionCheckBox");
 
                     checkBox.selectedProperty().setValue(se.getEnrolled());
 
@@ -455,10 +608,11 @@ public class Controller {
                         	textAreaConsole.setText("The following sections are enrolled:"+'\n');
                         	for (Section item: enrolledSections) {
                         		String newline = item.getCourseCode();
-                        		newline = newline + '\t'+ item.getCourseName() + '\t' +item.getSectionTitle();
+                        		newline = newline + '\t'+ item.getCourseName() + '\t' +item.getSectionTitle() + '\n';
                         		
-                        		textAreaConsole.setText(textAreaConsole.getText()+'\n'+ newline);
+                        		textAreaConsole.setText(textAreaConsole.getText() + newline);
                         	}
+                        	textAreaConsole.setText(textAreaConsole.getText() + '\n' +printCourses(filteredCourses));
                         }
                     });
                     return new SimpleObjectProperty<CheckBox>(checkBox);
