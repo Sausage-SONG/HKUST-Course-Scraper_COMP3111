@@ -47,7 +47,7 @@ public class MyApplication extends Application {
     /**
      *  Start UI
      *  @param stage stage
-     *  @throws Exception
+     *  @throws Exception exception
      */
 	@Override
 	public void start(Stage stage) throws Exception {
