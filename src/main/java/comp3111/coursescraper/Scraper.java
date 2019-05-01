@@ -209,6 +209,7 @@ public class Scraper {
 	public List<String> scrapeSubject(String baseurl, String term){
 		try {
 			HtmlPage page = client.getPage(baseurl +"/" + term+ "/");
+			
 			List<?> items = (List<?>) page.getByXPath("//div[@class='depts']");
 			
 			HtmlElement htmlItem = (HtmlElement) items.get(0);
@@ -221,7 +222,6 @@ public class Scraper {
 			}
 			client.close();
 			return result;
-			
 		} catch (Exception e) {
 			System.out.println(e);
 		}

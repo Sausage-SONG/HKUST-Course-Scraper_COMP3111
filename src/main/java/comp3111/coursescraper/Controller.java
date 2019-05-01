@@ -393,23 +393,23 @@ public class Controller {
     public void search() {
     	// About Task 5
     	buttonSfqEnrollCourse.setDisable(false);
-    	List<String> allSubject = scraper.scrapeSubject(textfieldURL.getText(), textfieldTerm.getText());
-    	textAreaConsole.setText("Total Number of Categories/Code Prefix: "+allSubject.size()+"\n\n");  
-    
+    	List<String> allSubject = scraper.scrapeSubject(textfieldURL.getText(), textfieldTerm.getText()); 
     	courses = scraper.scrape(textfieldURL.getText(), textfieldTerm.getText(),textfieldSubject.getText(), enrolledSections, true);
     	
     	// Handle 404
-    	if (courses == null) {
-    		textAreaConsole.appendText("Oops! 404 Not Found! Please check your input.\n");
+    	if (courses == null || allSubject == null) {
+    		textAreaConsole.setText("Oops! 404 Not Found! Please check your input.\n");
     		return;
     	}
+    	
+    	// About Task 5
+    	textAreaConsole.setText("Total Number of Categories/Code Prefix: "+allSubject.size()+"\n\n"); 
     	
     	// display task 1 information
     	textAreaConsole.appendText(this.backendInfo());
     	
     	// display details of each course
     	textAreaConsole.setText(textAreaConsole.getText() + "\n" + printCourses(courses));
-    	
     }
     
 
