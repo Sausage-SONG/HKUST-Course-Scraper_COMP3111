@@ -1,9 +1,9 @@
 # HKUST Course Scraper
 The course project of HKUST 2019Spring COMP3111: Software Engineering Project.  
 Members of Group30:
-- NI Xiaoyuan	-- Task 2, Task 3
-- LI Mengxuan	-- Task 5, Task 6
-- SONG Sizhe	-- Task 1, Task 4
+- [NI Xiaoyuan](https://github.com/xniac1998)	-- Task 2, Task 3
+- [LI Mengxuan](https://github.com/Maksim2049)	-- Task 5, Task 6
+- [SONG Sizhe](https://github.com/Sausage-SONG)	-- Task 1, Task 4
 <br></br><br></br><br></br>
 # Emails regarding Project Tasks
 ## Task 4: Timetable
